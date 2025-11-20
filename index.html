@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GlacioLive - GLOF Live</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+
+    /* Styles for Welcome message */
+    .welcome-user {
+      color: #fff;
+      font-weight: 400;
+      margin-right: 15px;
+      font-size: 20px;
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+      padding-top: 5px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    body.light .welcome-user {
+        color: #0a1a2e;
+    }
+    
+    #user-status-container {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+    
+    @media (max-width: 960px) {
+      #user-status-container {
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0;
+      }
+      .welcome-user {
+        margin-right: 0;
+        margin-bottom: 15px; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+
+  <header>
+    <div class="logo"><span>Glacio</span>Live</div>
+
+    <button class="nav-toggle" aria-label="toggle navigation">
+      <span class="hamburger"></span>
+    </button>
+
+    <nav>
+      <!-- REQ 4: Moved theme toggle inside nav -->
+      <div class="theme-toggle" id="themeToggle">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <div class="slider"></div>
+      </div>
+
+      <a href="#home" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/>
+        </svg>
+        Home
+      </a>
+    
+      <a href="dashboard.html" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/>
+        </svg>
+        Dashboard
+      </a>
+    
+      <a href="#about" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm0-80h480v-640h-80v280l-100-60-100 60v-280H240v640Zm0 0v-640 640Zm200-360 100-60 100 60-100-60-100 60Z"/>
+        </svg>
+        About
+      </a>
+      
+      <span id="user-status-container">
+        <!-- Login/Logout status inserted by Firebase script -->
+        <a href="login.html" class="nav-link login-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
+          </svg>
+          Login
+        </a>
+      </span>
+    </nav>
+
+    <div class="clock" id="clock">12:00 AM</div>
+  </header>
+
+  <section id="home" class="page active">
+    <div class="container">
+      <div class="ticker"><span id="ticker-text">Loading alerts...</span></div>
+
+      <div class="grid">
+        <div class="map-box">
+          <div class="tabs">
+            <button data-view="current">Current</button>
+            <button data-view="india" class="active">All India</button>
+            <button data-view="state">State-wise</button>
+          </div>
+          <div id="map"></div>
+        </div>
+
+        <div class="sidebar">
+          
+          <!-- REQ 2: Search moved to its own box -->
+          <div class="sidebar-box" id="search-box">
+            <h3>Location Search</h3>
+            <div class="search">
+              <input type="text" id="cityInput" placeholder="e.g. Guwahati" />
+              <button onclick="searchCity()">Go</button>
+            </div>
+          </div>
+
+          <!-- REQ 2: Weather box no longer contains search -->
+          <div class="sidebar-box weather">
+            <h3>Live Weather</h3>
+            <div id="weatherInfo">
+              <div class="loc" id="loc">Detecting...</div>
+              <div class="temp" id="temp">--°C</div>
+              <div class="desc" id="desc">Fetching...</div>
+              <div class="details">
+                <span>Humidity: <b id="hum">--%</b></span>
+                <span>Wind: <b id="wind">-- m/s</b></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-box alerts">
+            <h3 id="panelTitle">GLOF Alerts</h3>
+            <div id="alertList">Loading...</div>
+            <!-- REQ 1: This div will be populated with a scrollable table container -->
+            <div id="stateTable" style="display:none;"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="page">
+    <div class="container about-container">
+      <div class="about-header">
+        <h1>Saving Lives with <span style="color:#4fc3f7">Intelligence</span></h1>
+        <p class="subtitle">Real-time GLOF early warning system for the Himalayas.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-card mission">
+          <h3>Our Mission</h3>
+          <p>Glacial Lake Outburst Floods (GLOFs) pose a silent but deadly threat to the Himalayan ecosystem. <strong>GlacioLive</strong> combines satellite data, real-time weather APIs, and smart algorithms to detect risks before disaster strikes.</p>
+          <div class="features-list">
+            <span>📡 Real-Time Monitoring</span>
+            <span>🌊 Flood Risk Analysis</span>
+            <span>🗺️ Interactive Mapping</span>
+          </div>
+        </div>
+        <div class="about-card team">
+          <h3>Team CryoCast</h3>
+          <div class="team-grid">
+            <div class="team-member">
+              <div class="avatar">S</div>
+              <div class="info"><h4>Soumyadeep</h4><span>Developer</span></div>
+            </div>
+            <div class="team-member">
+              <div class="avatar">N</div>
+              <div class="info"><h4>Neelachalam</h4><span>Developer</span></div>
+            </div>
+            <div class="team-member">
+              <div class="avatar">S</div>
+              <div class="info"><h4>Sarthak</h4><span>Developer</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REQ 4: Theme toggle moved into <nav> -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script src="script.js"></script>
+
+  <script type="module">
+    // Import functions from the Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+    // YOUR FIREBASE CONFIGURATION OBJECT
+    const firebaseConfig = {
+      apiKey: "AIzaSyBt1Ats_Y4epVTioinUuDB_AfQUFanHtU0",
+      authDomain: "glaciolive-fe6ea.firebaseapp.com",
+      projectId: "glaciolive-fe6ea",
+      storageBucket: "glaciolive-fe6ea.firebasestorage.app",
+      messagingSenderId: "562979922381",
+      appId: "1:562979922381:web:7c6686faa1a7181880e484",
+      measurementId: "G-ZJCNG5LTS0"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    const userStatusContainer = document.getElementById('user-status-container');
+
+    // Listen for auth state changes
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is logged in
+        const userName = user.displayName || user.email || 'Welcome!';
+        
+        userStatusContainer.innerHTML = `
+          <span class="welcome-user">Welcome, ${userName.split(' ')[0]}</span>
+          <a href="#" class="nav-link login-btn" id="logoutBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+              <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+            </svg>
+            Logout
+          </a>
+        `;
+        
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          signOut(auth).then(() => {
+            console.log('User signed out');
+          }).catch((error) => {
+            console.error('Sign out error', error);
+          });
+        });
+        
+      } else {
+        // User is logged out
+        userStatusContainer.innerHTML = `
+          <a href="login.html" class="nav-link login-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+              <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
+            </svg>
+            Login
+          </a>
+        `;
+      }
+    });
+
+    // Simple SPA navigation
+    window.addEventListener('hashchange', navigate);
+    function navigate() {
+      const hash = window.location.hash || '#home';
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      const activePage = document.querySelector(hash);
+      if (activePage) {
+        activePage.classList.add('active');
+      }
+    }
+    navigate();
+
+  </script>
+</body>
+</html>
+

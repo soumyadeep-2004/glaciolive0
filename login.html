@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - GlacioLive</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    :root {
+      --primary: #4fc3f7;
+      --secondary: #0077b6;
+      --shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Josefin Sans', sans-serif;
+    }
+    
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .container {
+      position: relative;
+      width: 400px;
+      max-width: 90%;
+      height: 640px;
+      perspective: 1000px;
+    }
+
+    .form-box {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      backface-visibility: hidden;
+    }
+    
+    /* Rotations for the different views */
+    .login-box { transform: rotateY(0deg); z-index: 2; }
+    .register-box { transform: rotateY(180deg); z-index: 1; }
+    .phone-box { transform: rotateY(-180deg); z-index: 1; }
+    .forgot-box { transform: rotateX(180deg); z-index: 1; } /* Flips vertically */
+
+    /* State: Show Register */
+    .container.show-register .login-box { transform: rotateY(-180deg); z-index: 1; }
+    .container.show-register .register-box { transform: rotateY(0deg); z-index: 2; }
+    
+    /* State: Show Phone */
+    .container.show-phone .login-box { transform: rotateY(180deg); z-index: 1; }
+    .container.show-phone .phone-box { transform: rotateY(0deg); z-index: 2; }
+    
+    /* State: Show Forgot Password */
+    /* We rotate the login box down (X-axis) and bring the forgot box up */
+    .container.show-forgot .login-box { transform: rotateX(-180deg); z-index: 1; }
+    .container.show-forgot .forgot-box { transform: rotateX(0deg); z-index: 2; }
+
+    .form-content {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backface-visibility: hidden;
+      background: #112240; /* Ensure background is set for rotation */
+    }
+    /* Light mode background fix */
+    body.light .form-content {
+        background: #ffffff;
+    }
+
+    h3, h2 {
+      font-size: 2.2em;
+      font-weight: 300;
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+      padding-top: 20px;
+      color: #ffffff;
+    }
+    body.light h3, body.light h2 { color: #0077b6; }
+    
+    h3::after, h2::after {
+      content: '';
+      width: 60px;
+      height: 4px;
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+      background: var(--primary);
+    }
+    
+    .input-group {
+      position: relative;
+      margin: 20px 0;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 50px;
+      outline: none;
+      transition: 0.3s;
+      background: #0a1a2e;
+      color: #fff;
+    }
+    body.light .input-group input {
+        background: #f0f8ff;
+        color: #333;
+    }
+
+    .input-group label {
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      font-size: 1em;
+      pointer-events: none;
+      transition: 0.3s;
+      color: #aaa;
+    }
+
+    .input-group input:focus ~ label,
+    .input-group input:valid ~ label {
+      top: -10px;
+      left: 15px;
+      font-size: 0.8em;
+      padding: 0 8px;
+      font-weight: 600;
+      background: #112240;
+      color: #4fc3f7;
+    }
+    body.light .input-group input:focus ~ label,
+    body.light .input-group input:valid ~ label {
+      background: #ffffff;
+      color: #0077b6;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.4s;
+      margin-top: 10px;
+      box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+      background: linear-gradient(90deg, #4fc3f7, #0077b6);
+      color: #fff;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5);
+    }
+    .google-btn {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 50px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #fff;
+      color: #333;
+    }
+    .google-btn:hover {
+      transform: translateY(-3px);
+      border-color: #aaa;
+      box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5);
+    }
+    .google-btn img {
+      width: 20px;
+    }
+    .phone-btn {
+      width: 100%;
+      padding: 12px;
+      background: #34a853;
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+    .phone-btn:hover {
+      background: #2c8e45;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #e0e7ef;
+    }
+    body.light .link { color: #333; }
+    
+    .link a {
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      color: #4fc3f7;
+    }
+    body.light .link a { color: #0077b6; }
+    
+    .link a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Back to Home Page Button */
+    .link-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: #259c53;
+      border-radius: 50px;
+      color: #ffffff;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 15px;
+      text-align: center;
+      text-decoration: none;
+      font-family: 'Josefin Sans', sans-serif;
+    }
+
+    .link-btn:hover {
+      background: #2c8e45;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5);
+    }
+    
+    #recaptcha-container {
+        margin: 15px auto;
+        transform: scale(0.9);
+        transform-origin: center;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px; 
+      right: 20px;
+      background: #4caf50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.5s;
+      z-index: 2000;
+    }
+    .toast.error {
+        background: #f44336;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  </style>
+</head>
+<body class="login-page">
+
+  <div class="bg"></div>
+
+  <div class="container" id="container">
+  
+    <!-- Login Form -->
+    <div class="form-box login-box">
+      <div class="form-content">
+        <h3>Sign in to <div class="logo"><span>Glacio</span>Live</div></h3>
+        <form id="loginForm">
+          <div class="input-group">
+            <input type="email" id="loginEmail" required />
+            <label>Email</label>
+          </div>
+          <div class="input-group">
+            <input type="password" id="loginPassword" required />
+            <label>Password</label>
+          </div>
+          <!-- ADDED: Forgot Password Link -->
+          <div style="text-align: right; margin-bottom: 10px;">
+             <a href="#" id="showForgot" style="color: #aaa; font-size: 0.9em; text-decoration: none;">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <button type="button" class="google-btn" id="googleLoginBtn">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon">
+          Sign in with Google
+        </button>
+        
+        <a href="index.html" class="link-btn">Back to Home Page</a>
+        
+        <div class="link">
+          New here? <a id="showRegister">Create an account</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div class="form-box register-box">
+      <div class="form-content">
+        <h2>Join Us Today</h2>
+        <form id="registerForm">
+          <div class="input-group">
+            <input type="text" id="registerName" required />
+            <label>Full Name</label>
+          </div>
+          <div class="input-group">
+            <input type="email" id="registerEmail" required />
+            <label>Email</label>
+          </div>
+          <div class="input-group">
+            <input type="password" id="registerPassword" required />
+            <label>Password</label>
+          </div>
+          <button type="submit" class="btn">Register</button>
+        </form>
+        
+        <a href="index.html" class="link-btn">Back to Home Page</a>
+
+        <div class="link">
+          Already have an account? <a id="showLogin">Sign in</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Phone Auth Form -->
+    <div class="form-box phone-box">
+      <div class="form-content">
+        <h2 id="phoneTitle">Sign In with Phone</h2>
+        
+        <form id="phoneForm">
+          <div class="input-group">
+            <input type="tel" id="phoneNumber" placeholder="+91" required />
+            <label>Phone Number</label>
+          </div>
+          <div id="recaptcha-container"></div>
+          <button type="submit" class="btn">Send OTP</button>
+        </form>
+        
+        <form id="otpForm" style="display:none;">
+            <p>Enter the OTP sent to <span id="phoneDisplay"></span></p>
+          <div class="input-group">
+            <input type="text" id="otpInput" required />
+            <label>OTP Code</label>
+          </div>
+          <button type="submit" class="btn">Verify OTP</button>
+        </form>
+        
+        <a href="index.html" class="link-btn">Back to Home Page</a>
+        
+        <div class="link">
+          Back to <a id="showLoginFromPhone">Email Login</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ADDED: Forgot Password Form -->
+    <div class="form-box forgot-box">
+      <div class="form-content">
+        <h2>Reset Password</h2>
+        <p style="text-align: center; color: #aaa; margin-bottom: 20px; font-size: 0.95em;">
+          Enter your email address below and we'll send you a code to reset your password.
+        </p>
+        <form id="forgotForm">
+          <div class="input-group">
+            <input type="email" id="forgotEmail" required />
+            <label>Email Address</label>
+          </div>
+          <button type="submit" class="btn">Send Reset Code</button>
+        </form>
+        
+        <div class="link" style="margin-top: 30px;">
+          Remembered it? <a id="hideForgot">Back to Login</a>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="toast" id="toastMsg">Success! Action completed.</div>
+
+  <script>
+    // --- UI Controls ---
+    const container = document.getElementById('container');
+    const showRegister = document.getElementById('showRegister');
+    const showLogin = document.getElementById('showLogin');
+    const showPhoneLogin = document.getElementById('showPhoneLogin');
+    const showLoginFromPhone = document.getElementById('showLoginFromPhone');
+    
+    // ADDED: Forgot Password Controls
+    const showForgot = document.getElementById('showForgot');
+    const hideForgot = document.getElementById('hideForgot');
+    
+    const toastMsg = document.getElementById('toastMsg');
+
+    // Standard Toggles
+    showRegister.addEventListener('click', () => container.classList.add('show-register'));
+    showLogin.addEventListener('click', () => container.classList.remove('show-register', 'show-phone', 'show-forgot'));
+    showPhoneLogin.addEventListener('click', () => container.classList.add('show-phone'));
+    showLoginFromPhone.addEventListener('click', () => container.classList.remove('show-register', 'show-phone'));
+    
+    // Forgot Password Toggles
+    showForgot.addEventListener('click', (e) => {
+        e.preventDefault();
+        container.classList.add('show-forgot');
+    });
+    
+    hideForgot.addEventListener('click', (e) => {
+        e.preventDefault();
+        container.classList.remove('show-forgot');
+    });
+
+    // --- Toast Notification ---
+    function showToast(message, isError = false) {
+      toastMsg.textContent = message;
+      if (isError) {
+        toastMsg.classList.add('error');
+      } else {
+        toastMsg.classList.remove('error');
+      }
+      toastMsg.classList.add('show');
+      setTimeout(() => {
+        toastMsg.classList.remove('show');
+      }, 3000);
+    }
+    
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light');
+    }
+  </script>
+
+  <!-- Firebase SDKs and Authentication Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup,
+      RecaptchaVerifier,
+      signInWithPhoneNumber,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail, // ADDED: Import for reset function
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBt1Ats_Y4epVTioinUuDB_AfQUFanHtU0",
+      authDomain: "glaciolive-fe6ea.firebaseapp.com",
+      projectId: "glaciolive-fe6ea",
+      storageBucket: "glaciolive-fe6ea.firebasestorage.app",
+      messagingSenderId: "562979922381",
+      appId: "1:562979922381:web:7c6686faa1a7181880e484",
+      measurementId: "G-ZJCNG5LTS0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    // --- REAL GEOLOCATION CAPTURE ---
+    function getRealLocation() {
+        const FALLBACK_LAT = 28.6; 
+        const FALLBACK_LON = 77.2;
+        const FALLBACK_SOURCE = "Default/Fallback (Permission Denied)";
+        
+        if (navigator.geolocation) {
+            return new Promise((resolve) => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            lat: parseFloat(position.coords.latitude.toFixed(4)),
+                            lon: parseFloat(position.coords.longitude.toFixed(4)),
+                            source: "Browser GPS (Accurate)"
+                        });
+                    },
+                    (error) => {
+                        console.warn("Geolocation Error:", error.message);
+                        resolve({
+                            lat: FALLBACK_LAT,
+                            lon: FALLBACK_LON,
+                            source: FALLBACK_SOURCE
+                        });
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            });
+        } else {
+            return Promise.resolve({
+                lat: FALLBACK_LAT,
+                lon: FALLBACK_LON,
+                source: "Unsupported Browser (Fallback)"
+            });
+        }
+    }
+
+    // --- CORE USER DATA SAVING FUNCTION ---
+    async function saveUserData(user, additionalData = {}) {
+        const userRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userRef);
+        
+        const geoLocation = await getRealLocation(); 
+
+        if (!docSnap.exists()) {
+            let dataToSave = {
+                displayName: user.displayName || additionalData.displayName || "Anonymous",
+                email: user.email || null,
+                phoneNumber: user.phoneNumber || null,
+                joinDate: serverTimestamp(),
+                geo: geoLocation
+            };
+            await setDoc(userRef, dataToSave);
+            return true;
+        }
+        
+        await setDoc(userRef, { geo: geoLocation }, { merge: true });
+        return false;
+    }
+    
+    // --- GOOGLE SIGN-IN ---
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const provider = new GoogleAuthProvider();
+    
+    googleLoginBtn.addEventListener('click', () => {
+      signInWithPopup(auth, provider)
+        .then(async (result) => {
+          const user = result.user;
+          const isNewUser = await saveUserData(user);
+          showToast(isNewUser ? `Welcome, ${user.displayName}!` : `Welcome back, ${user.displayName}!`);
+          window.location.href = "index.html";
+        }).catch((error) => {
+          console.error("Google Sign-In Error:", error.message);
+          showToast(`Error: ${error.message}`, true);
+        });
+    });
+
+    // --- EMAIL/PASSWORD LOGIN ---
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        signInWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                await saveUserData(userCredential.user); 
+                showToast(`Welcome back, ${userCredential.user.email}!`);
+                window.location.href = "index.html";
+            })
+            .catch((error) => {
+                showToast(error.message, true);
+            });
+    });
+
+    // --- REGISTRATION ---
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                await updateProfile(user, { displayName: name });
+                await saveUserData(user, { displayName: name });
+                showToast(`Welcome, ${name}! Your account is created.`);
+                window.location.href = "index.html";
+            })
+            .catch((error) => {
+                showToast(error.message, true);
+            });
+    });
+    
+    // --- ADDED: FORGOT PASSWORD LOGIC ---
+    const forgotForm = document.getElementById('forgotForm');
+    
+    forgotForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgotEmail').value;
+        
+        sendPasswordResetEmail(auth, email)
+          .then(() => {
+            showToast(`Reset link sent to ${email}`);
+            document.getElementById('forgotEmail').value = ''; // Clear input
+            // Optionally flip back to login after a delay
+            setTimeout(() => {
+                container.classList.remove('show-forgot');
+            }, 3000);
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            showToast(`Error: ${errorMessage}`, true);
+          });
+    });
+
+    // --- PHONE AUTH ---
+    const phoneForm = document.getElementById('phoneForm');
+    const otpForm = document.getElementById('otpForm');
+    const phoneNumberInput = document.getElementById('phoneNumber');
+    const phoneDisplay = document.getElementById('phoneDisplay');
+    const otpInput = document.getElementById('otpInput');
+
+    function setupRecaptcha() {
+      if (!window.recaptchaVerifier) {
+          window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+              'size': 'normal',
+              'callback': (response) => {},
+              'expired-callback': () => {
+                  showToast("reCAPTCHA expired, please solve again.", true);
+              }
+          });
+          window.recaptchaVerifier.render().catch(err => {
+            console.error("reCAPTCHA render error:", err);
+          });
+      }
+    }
+    
+    showPhoneLogin.addEventListener('click', () => {
+        setupRecaptcha();
+        container.classList.add('show-phone');
+    });
+
+    phoneForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const phoneNumber = phoneNumberInput.value;
+        const appVerifier = window.recaptchaVerifier;
+        
+        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                showToast("OTP sent successfully!");
+                phoneForm.style.display = 'none';
+                otpForm.style.display = 'block';
+                phoneDisplay.textContent = phoneNumber;
+                document.getElementById('phoneTitle').textContent = "Enter OTP";
+            }).catch((error) => {
+                showToast(`Error sending OTP: ${error.message}`, true);
+                window.recaptchaVerifier.render().catch(err => console.error(err));
+            });
+    });
+
+    otpForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = otpInput.value;
+        
+        window.confirmationResult.confirm(code).then(async (result) => {
+            const user = result.user;
+            await saveUserData(user); 
+            showToast("Login Successful!");
+            window.location.href = "index.html";
+        }).catch((error) => {
+            showToast("Invalid OTP. Please try again.", true);
+        });
+    });
+  </script>
+
+</body>
+</html>
+
+

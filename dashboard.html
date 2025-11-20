@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - GlacioLive</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  
+  <style>
+    /* Styles for the dynamically added welcome message (copied from index.html) */
+    .welcome-user {
+      color: #fff;
+      font-weight: 600;
+      margin-right: 15px;
+      font-size: 0.9em;
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+    }
+    body.light .welcome-user {
+        color: #0a1a2e;
+    }
+    #user-status-container {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle; /* Fix for alignment */
+    }
+    @media (max-width: 960px) {
+      #user-status-container {
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0;
+      }
+      .welcome-user {
+        margin-right: 0;
+        margin-bottom: 15px; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+
+  <header>
+    <div class="logo"><span>Glacio</span>Live</div>
+
+    <button class="nav-toggle" aria-label="toggle navigation">
+      <span class="hamburger"></span>
+    </button>
+
+    <nav>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <div class="slider"></div>
+      </div>
+
+      <a href="index.html#home" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/>
+        </svg>
+        Home
+      </a>
+    
+      <a href="dashboard.html" class="nav-link"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/>
+        </svg>
+        Dashboard
+      </a>
+    
+      <a href="index.html#about" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm0-80h480v-640h-80v280l-100-60-100 60v-280H240v640Zm0 0v-640 640Zm200-360 100-60 100 60-100-60-100 60Z"/>
+        </svg>
+        About
+      </a>
+      
+      <span id="user-status-container">
+        <a href="login.html" class="nav-link login-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
+          </svg>
+          Login
+        </a>
+      </span>
+    </nav>
+    <div class="clock" id="clock">12:00 AM</div>
+  </header>
+
+  <section id="dashboard" class="page active">
+    <div class="container">
+
+      <div class="dash-tabs">
+        <button class="dash-tab-btn active" data-target="glof-dashboard-content">GLOF Dashboard</button>
+        <!-- MODIFIED: Button now links to users.html -->
+        <button class="dash-tab-btn" onclick="window.location.href='users.html'">Users Dashboard</button>
+      </div>
+
+      <div id="glof-dashboard-content" class="dash-content active">
+
+        <div id="national-view" class="dashboard-view active">
+          <div class="breadcrumb">National Overview</div>
+          <div class="grid-container">
+            <div class="dash-card stat-card span-1">
+              <h3>National Alert Summary</h3>
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <label>Total Monitored Lakes</label>
+                  <span id="national-total-lakes">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Lakes on Alert</label>
+                  <span id="national-lakes-alert" class="sev High">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>States on Watch</label>
+                  <span id="national-states-watch" class="sev Medium">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Last Update</label>
+                  <span id="national-last-update">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card stat-card span-2">
+              <h3>Overall Climate Snapshot</h3>
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <label>Avg. Temp (Himalaya)</label>
+                  <span id="national-avg-temp">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Avg. Rainfall (24h)</label>
+                  <span id="national-avg-rain">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Snowmelt Rate</label>
+                  <span id="national-snowmelt">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Flood Risk Zones</label>
+                  <span id="national-flood-zones">--</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dash-card map-card span-2">
+              <h3>India Map Overview <small>(Click a state in the table)</small></h3>
+              <div id="national-map"></div>
+            </div>
+
+            <div class="dash-card table-card span-1">
+              <h3>Top Risk Lakes Overview</h3>
+              <div class="table-container">
+                <table id="national-lakes-table">
+                  <thead>
+                    <tr><th>Lake Name</th><th>State</th><th>Risk Level</th><th>Last Update</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="4">Loading test data...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="dash-card chart-card span-3">
+              <h3>Historical Trends</h3>
+              <div class="chart-grid">
+                <div class="chart-wrapper">
+                  <canvas id="national-history-chart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="national-risk-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="state-view" class="dashboard-view">
+          <div class="breadcrumb">
+            <a href="#" id="back-to-national">National Overview</a> &gt; 
+            <span id="state-name-breadcrumb">State</span>
+          </div>
+          <div class="grid-container">
+            <div class="dash-card stat-card span-1">
+              <h3>State Alert Summary</h3>
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <label>Overall Risk</label>
+                  <span id="state-risk-level" class="sev">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Monitored Lakes</label>
+                  <span id="state-total-lakes">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Active Alerts</label>
+                  <span id="state-active-alerts" class="sev High">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Last Major Alert</label>
+                  <span id="state-last-alert">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card stat-card span-1">
+              <h3>Environmental Conditions</h3>
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <label>Avg. Rainfall (24h)</label>
+                  <span id="state-avg-rain">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Avg. Temperature</label>
+                  <span id="state-avg-temp">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Avg. Wind Speed</label>
+                  <span id="state-avg-wind">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Snowmelt Index</label>
+                  <span id="state-snowmelt">--</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dash-card map-card span-2">
+              <h3>State Map Overview <small>(Click a lake in the table)</small></h3>
+              <div id="state-map"></div>
+            </div>
+
+            <div class="dash-card table-card span-2">
+              <h3>Lake-wise Summary</h3>
+              <div class="table-container">
+                <table id="state-lakes-table">
+                  <thead>
+                    <tr><th>Lake Name</th><th>Region</th><th>Water Level</th><th>Risk</th><th>Status</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="dash-card chart-card span-2">
+              <h3>Trends & Analytics</h3>
+              <div class="chart-grid">
+                <div class="chart-wrapper">
+                  <canvas id="state-rain-chart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="state-temp-chart"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dash-card span-1">
+                <h3>Recent Alerts</h3>
+                <div class="timeline" id="state-alert-timeline">
+                    </div>
+            </div>
+            
+            <div class="dash-card span-1">
+                <h3>Critical Zones & Infrastructure</h3>
+                <ul id="state-critical-zones">
+                    </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div id="lake-view" class="dashboard-view">
+          <div class="breadcrumb">
+            <a href="#" id="back-to-national-2">National Overview</a> &gt; 
+            <a href="#" id="back-to-state">State</a> &gt; 
+            <span id="lake-name-breadcrumb">Lake</span>
+          </div>
+          <div class="grid-container">
+            
+            <div class="dash-card info-card span-1">
+                <h3>Lake Overview</h3>
+                <p><strong>ID:</strong> <span id="lake-id">--</span></p>
+                <p><strong>Coordinates:</strong> <span id="lake-coords">--</span></p>
+                <p><strong>Altitude:</strong> <span id="lake-altitude">--</span></p>
+                <p><strong>Type:</strong> <span id="lake-type">--</span></p>
+                <p><strong>Basin:</strong> <span id="lake-basin">--</span></p>
+            </div>
+
+            <div class="dash-card stat-card span-1">
+              <h3>Lake Statistics</h3>
+              <div class="stat-grid-dense">
+                <div class="stat-item">
+                  <label>Water Level</label>
+                  <span id="lake-water-level">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Surface Area</label>
+                  <span id="lake-surface-area">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Volume (est.)</label>
+                  <span id="lake-volume">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Growth Rate (yr)</label>
+                  <span id="lake-growth-rate">--</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dash-card stat-card span-1">
+              <h3>Moraine / Dam Stability</h3>
+              <div class="stat-grid-dense">
+                <div class="stat-item">
+                  <label>Stability Index</label>
+                  <span id="lake-stability-index" class="sev">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Deformation</label>
+                  <span id="lake-deformation">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Outflow</label>
+                  <span id="lake-outflow">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Seepage</label>
+                  <span id="lake-seepage">--</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dash-card chart-card span-3">
+              <h3>Local Meteorological Data</h3>
+              <div class="chart-grid-3">
+                  <div class="stat-item-lg">
+                      <label>Current Temp</label>
+                      <span id="lake-current-temp">--</span>
+                  </div>
+                  <div class="stat-item-lg">
+                      <label>Rainfall (24h)</label>
+                      <span id="lake-current-rain">--</span>
+                  </div>
+                  <div class="stat-item-lg">
+                      <label>Humidity</label>
+                      <span id="lake-current-humidity">--</span>
+                  </div>
+                  <div class="chart-wrapper span-3">
+                      <canvas id="lake-meteo-chart"></canvas>
+                  </div>
+              </div>
+            </div>
+
+            <div class="dash-card map-card span-2">
+              <h3>Flood Simulation & Impact</h3>
+              <div id="lake-sim-map"></div>
+              <p>Est. downstream impact: <strong id="lake-sim-impact">--</strong></p>
+            </div>
+            
+            <div class="dash-card span-1">
+                <h3>Satellite & Sensor</h3>
+                <img id="lake-satellite-img" src="https://via.placeholder.com/300x200?text=Recent+Satellite+Image" alt="Satellite Image" style="width:100%; border-radius: 8px; margin-bottom: 10px;">
+                <p><strong>NDWI Change:</strong> <span id="lake-ndwi">--</span></p>
+                <p><strong>Ice Cover:</strong> <span id="lake-ice-cover">--</span></p>
+            </div>
+            
+            <div class="dash-card table-card span-2">
+              <h3>Sensor & System Health</h3>
+              <div class="table-container">
+                <table id="lake-sensor-table">
+                  <thead><tr><th>Sensor ID</th><th>Status</th><th>Uptime</th><th>Battery</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="dash-card span-1">
+              <h3>Alert History</h3>
+              <div class="timeline" id="lake-alert-history">
+                </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- REMOVED: User dashboard content div was here -->
+
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script src="dashboard.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { 
+      getAuth, 
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBt1Ats_Y4epVTioinUuDB_AfQUFanHtU0",
+      authDomain: "glaciolive-fe6ea.firebaseapp.com",
+      projectId: "glaciolive-fe6ea",
+      storageBucket: "glaciolive-fe6ea.firebasestorage.app",
+      messagingSenderId: "562979922381",
+      appId: "1:562979922381:web:7c6686faa1a7181880e484",
+      measurementId: "G-ZJCNG5LTS0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    const userStatusContainer = document.getElementById('user-status-container');
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userName = user.displayName || user.email || 'Welcome!';
+        userStatusContainer.innerHTML = `
+          <span class="welcome-user">Welcome, ${userName.split(' ')[0]}</span>
+          <a href="#" class="nav-link login-btn" id="logoutBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+              <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+            </svg>
+            Logout
+          </a>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          signOut(auth).then(() => {
+            console.log('User signed out');
+            window.location.href = "index.html"; // Redirect to home on logout
+          }).catch((error) => {
+            console.error('Sign out error', error);
+          });
+        });
+      } else {
+        userStatusContainer.innerHTML = `
+          <a href="login.html" class="nav-link login-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+              <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
+            </svg>
+            Login
+          </a>
+        `;
+      }
+    });
+
+    // Clock logic from script.js (moved here as script.js is not loaded)
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours() % 12 || 12;
+      const m = now.getMinutes().toString().padStart(2,'0');
+      const am = now.getHours() >= 12 ? 'PM' : 'AM';
+      const clockEl = document.getElementById('clock');
+      if (clockEl) clockEl.textContent = `${h}:${m} ${am}`;
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    // Mobile nav toggle logic from script.js
+    const navToggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('nav');
+    if (navToggle && nav) {
+        navToggle.addEventListener('click', () => {
+          nav.classList.toggle('nav-active');
+          navToggle.classList.toggle('nav-active');
+        });
+        document.querySelectorAll('nav a').forEach(link => {
+          link.addEventListener('click', () => {
+            if (nav.classList.contains('nav-active')) {
+              nav.classList.remove('nav-active');
+              navToggle.classList.remove('nav-active');
+            }
+          });
+        });
+    }
+
+    // Theme toggle logic from script.js
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.onclick = () => {
+          document.body.classList.toggle('light');
+          localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+        };
+    }
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light');
+    }
+
+  </script>
+
+</body>
+</html>
