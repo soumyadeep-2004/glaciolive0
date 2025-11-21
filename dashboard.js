@@ -418,6 +418,3 @@ function renderLiveMeteoChart() {
     options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: true, grid: { color: '#112240' }, ticks: { color: '#8892b0' } }, x: { grid: { display: false }, ticks: { color: '#8892b0' } } } }
   });
 }
-
-
-
