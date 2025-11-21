@@ -74,6 +74,79 @@ let activeLakeId = null;// Currently viewed lake
 // =======================================================
 // 4. INITIALIZATION
 // =======================================================
+// ... (Keep your existing Configuration, Database, and Global State sections) ...
+
+// =======================================================
+// 4. INITIALIZATION
+// =======================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Setup UI Elements (Clock & Theme) - NEW
+  setupUI();
+
+  // 2. Load default view
+  renderNationalView();
+  
+  // 3. Setup Navigation listeners
+  setupNavigation();
+  
+  // 4. Start the "Fake" Live Data
+  startRealTimeSimulation(); 
+});
+
+// =======================================================
+// NEW: UI SETUP FUNCTION (Clock & Theme)
+// =======================================================
+function setupUI() {
+  // --- A. CLOCK LOGIC ---
+  function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Convert hour '0' to '12'
+    
+    const timeString = `${hours}:${minutes} ${ampm}`;
+    
+    const clockEl = document.getElementById('clock');
+    if(clockEl) clockEl.innerText = timeString;
+  }
+  
+  // Update immediately and then every second
+  updateClock(); 
+  setInterval(updateClock, 1000);
+
+  // --- B. THEME TOGGLE LOGIC ---
+  const themeToggle = document.getElementById('themeToggle');
+  const body = document.body;
+  
+  // 1. Check Local Storage for saved preference
+  if (localStorage.getItem('theme') === 'light') {
+    body.classList.add('light-mode');
+  }
+
+  // 2. Toggle Listener
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('light-mode');
+      
+      // Save preference
+      if (body.classList.contains('light-mode')) {
+        localStorage.setItem('theme', 'light');
+      } else {
+        localStorage.setItem('theme', 'dark');
+      }
+
+      // Optional: Re-render active chart if you want colors to update instantly
+      if(activeLakeId && charts.liveMeteo) {
+         charts.liveMeteo.update(); // Triggers chart refresh for new colors
+      }
+    });
+  }
+}
+
+// ... (Keep the rest of your Navigation, View Rendering, and Helper functions) ...
 document.addEventListener('DOMContentLoaded', () => {
   // Load default view
   renderNationalView();
@@ -536,3 +609,4 @@ function renderLiveMeteoChart() {
     }
   });
 }
+
