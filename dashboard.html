@@ -6,194 +6,354 @@
   <title>Dashboard - GlacioLive</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
+  
+  <style>
+    .welcome-user {
+      color: #fff;
+      font-weight: 400;
+      margin-right: 15px;
+      font-size: 20px;
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+      padding-top: 5px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    body.light .welcome-user { color: #0a1a2e; }
+    #user-status-container { display: inline-flex; align-items: center; vertical-align: middle; }
+    @media (max-width: 960px) {
+      #user-status-container { flex-direction: column; align-items: center; margin: 20px 0; }
+      .welcome-user { margin-right: 0; margin-bottom: 15px; }
+    }
+  </style>
 </head>
 <body>
   <div class="bg"></div>
 
   <header>
     <div class="logo"><span>Glacio</span>Live</div>
-    <button class="nav-toggle" aria-label="toggle navigation"><span class="hamburger"></span></button>
+
+    <button class="nav-toggle" aria-label="toggle navigation">
+      <span class="hamburger"></span>
+    </button>
+
     <nav>
       <div class="theme-toggle" id="themeToggle">
-        <span class="icon-sun">☀️</span><span class="icon-moon">🌙</span><div class="slider"></div>
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <div class="slider"></div>
       </div>
-      <a href="index.html#home" class="nav-link">Home</a>
-      <a href="dashboard.html" class="nav-link active">Dashboard</a>
-      <span id="user-status-container"><a href="login.html" class="nav-link login-btn">Login</a></span>
+
+      <a href="index.html" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/>
+        </svg>
+        Home
+      </a>
+    
+      <a href="dashboard.html" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/>
+        </svg>
+        Dashboard
+      </a>
+    
+      <a href="index.html#about" class="nav-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+          <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm0-80h480v-640h-80v280l-100-60-100 60v-280H240v640Zm0 0v-640 640Zm200-360 100-60 100 60-100-60-100 60Z"/>
+        </svg>
+        About
+      </a>
+      
+      <span id="user-status-container">
+        <!-- Login/Logout status inserted by Firebase script -->
+        <a href="login.html" class="nav-link login-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon">
+            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/>
+          </svg>
+          Login
+        </a>
+      </span>
     </nav>
     <div class="clock" id="clock">12:00 AM</div>
   </header>
 
   <section id="dashboard" class="page active">
     <div class="container">
-      
+
       <div class="dash-tabs">
-        <button class="dash-tab-btn active" onclick="renderNationalView()">National Overview</button>
-        <button class="dash-tab-btn" onclick="window.location.href='users.html'">Team & Users</button>
+        <button class="dash-tab-btn active" data-target="glof-dashboard-content">GLOF Dashboard</button>
+        <button class="dash-tab-btn" onclick="window.location.href='users.html'">Users Dashboard</button>
       </div>
 
       <div id="glof-dashboard-content" class="dash-content active">
 
         <div id="national-view" class="dashboard-view active">
           <div class="breadcrumb">National Overview</div>
-          
           <div class="grid-container">
+            
+            <div class="dash-card stat-card span-1">
+              <h3>National Alert Summary</h3>
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <label>Total Monitored Lakes</label>
+                  <span id="national-total-lakes">15</span>
+                </div>
+                <div class="stat-item">
+                  <label>High Risk Lakes</label>
+                  <span id="national-lakes-alert" class="sev High">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>States Covered</label>
+                  <span id="national-states-watch" class="sev Medium">3</span>
+                </div>
+                <div class="stat-item">
+                  <label>Last Update</label>
+                  <span id="national-last-update">Just now</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card stat-card span-2">
+              <h3>Overall Climate Snapshot (Himalayas)</h3>
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <label>Avg. Temp</label>
+                  <span id="national-avg-temp">-2.5°C</span>
+                </div>
+                <div class="stat-item">
+                  <label>Precipitation Trend</label>
+                  <span id="national-avg-rain">Moderate</span>
+                </div>
+                <div class="stat-item">
+                  <label>Snowmelt Rate</label>
+                  <span id="national-snowmelt">High</span>
+                </div>
+                <div class="stat-item">
+                  <label>Active Sensors</label>
+                  <span id="national-flood-zones">42</span>
+                </div>
+              </div>
+            </div>
+            
             <div class="dash-card map-card span-2">
-              <h3>Real-Time National Threat Map</h3>
+              <h3>India Map Overview <small>(Click a marker to view details)</small></h3>
               <div id="national-map"></div>
             </div>
 
             <div class="dash-card table-card span-1">
-              <h3>Top Risk Lakes (Live Status)</h3>
+              <h3>Top Risk Lakes Overview</h3>
               <div class="table-container">
                 <table id="national-lakes-table">
                   <thead>
-                    <tr><th>Lake</th><th>State</th><th>Risk</th><th>Status</th></tr>
+                    <tr><th>Lake Name</th><th>State</th><th>Risk Level</th><th>Last Update</th></tr>
                   </thead>
-                  <tbody></tbody>
+                  <tbody>
+                    </tbody>
                 </table>
               </div>
             </div>
-
-            <div class="dash-card chart-card span-3">
-              <h3>Historical GLOF Occurrences <small>(Click bars for details)</small></h3>
-              <div class="chart-grid">
-                <div class="chart-wrapper span-3"><canvas id="national-history-chart"></canvas></div>
-              </div>
-              <div id="history-modal" class="history-modal" style="display:none;">
-                <h4 id="hist-modal-title">Event Title</h4>
-                <p><strong>Date:</strong> <span id="hist-modal-date">--</span></p>
-                <p><strong>Location:</strong> <span id="hist-modal-loc">--</span></p>
-                <p id="hist-modal-desc">--</p>
-              </div>
+            
+            <div class="dash-card table-card span-3">
+                <h3>Risk Calculation Parameters</h3>
+                <div class="table-container">
+                  <table class="risk-ref-table">
+                    <thead>
+                      <tr>
+                        <th>Parameter</th>
+                        <th>Low Risk</th>
+                        <th>Moderate Risk</th>
+                        <th>High Risk</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Rainfall (24hrs)</td>
+                        <td>&lt;50 mm</td>
+                        <td>50–100 mm</td>
+                        <td>&gt;100 mm</td>
+                      </tr>
+                      <tr>
+                        <td>Temperature (Max)</td>
+                        <td>5–10°C</td>
+                        <td>10–15°C</td>
+                        <td>&gt;15°C</td>
+                      </tr>
+                      <tr>
+                        <td>Fresh Snowfall (24hrs)</td>
+                        <td>10–20 cm</td>
+                        <td>20–50 cm</td>
+                        <td>&gt;50 cm + Rain</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
             </div>
+
           </div>
         </div>
 
-        <div id="state-view" class="dashboard-view">
+        <div id="lake-view" class="dashboard-view">
           <div class="breadcrumb">
-            <a href="#" id="back-to-national">National Overview</a> &gt; <span id="state-name-breadcrumb">State</span>
+            <a href="#" id="back-to-national-2">National Overview</a> &gt; 
+            <span id="lake-name-breadcrumb">Lake Name</span>
           </div>
-          
-          <div class="grid-container">
-            <div class="dash-card stat-card span-3">
-              <h3>Current State Weather (Live)</h3>
-              <div class="stat-grid-4">
-                <div class="stat-item"><label>Temperature</label><span id="state-live-temp">--</span></div>
-                <div class="stat-item"><label>Condition</label><span id="state-live-condition">--</span></div>
-                <div class="stat-item"><label>Humidity</label><span id="state-live-humid">--</span></div>
-                <div class="stat-item"><label>Wind Speed</label><span id="state-live-wind">--</span></div>
-              </div>
-            </div>
-
-            <div class="dash-card stat-card span-1">
-              <h3>Risk Factors</h3>
-              <div class="stat-grid">
-                <div class="stat-item"><label>Overall Risk</label><span id="state-risk" class="sev">--</span></div>
-                <div class="stat-item"><label>High Risk Lake</label><span id="state-high-risk-lake" class="sev">--</span></div>
-                <div class="stat-item"><label>Last Alert</label><span id="state-last-alert">--</span></div>
-                <div class="stat-item"><label>Avg Rainfall</label><span id="state-avg-rain">--</span></div>
-              </div>
-            </div>
-
-            <div class="dash-card map-card span-2">
-              <h3>SATELLITE MAP</h3>
-              <div id="state-map"></div>
-            </div>
-
-            <div class="dash-card table-card span-2">
-              <h3>Lake-wise Summary (Real-time)</h3>
-              <div class="table-container">
-                <table id="state-lakes-table">
-                  <thead><tr><th>Lake Name</th><th>Region</th><th>Water Level</th><th>Risk Status</th><th>Action</th></tr></thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="dash-card chart-card span-1">
-              <h3>Regional Trends (Live)</h3>
-              <div class="chart-wrapper"><canvas id="state-rain-temp-chart"></canvas></div>
-            </div>
-          </div>
-        </div>
-        
-       <div id="lake-view" class="dashboard-view">
-          <div class="breadcrumb">
-            <a href="#" id="back-to-national-2">National</a> &gt; 
-            <a href="#" id="back-to-state">State</a> &gt; 
-            <span id="lake-name-breadcrumb">Lake</span>
-          </div>
-
           <div class="grid-container">
             
-            <div class="dash-card map-card span-2">
-              <h3>Live Satellite Image</h3>
-              <div id="lake-map" style="height: 300px; border-radius: 8px;"></div>
-            </div>
-
             <div class="dash-card info-card span-1">
-              <h3>Lake Overview</h3>
-              <p><strong>ID:</strong> <span id="lake-id">--</span></p>
-              <p><strong>Coordinates:</strong> <span id="lake-coords">--</span></p>
-              <p><strong>Type:</strong> <span id="lake-type">--</span></p>
-              <p><strong>Basin:</strong> <span id="lake-basin">--</span></p>
+                <h3>Lake Overview</h3>
+                <div class="overview-grid">
+                  <div class="overview-item">
+                    <label>Coordinates</label>
+                    <span id="lake-coords">--</span>
+                  </div>
+                  <div class="overview-item">
+                    <label>Altitude</label>
+                    <span id="lake-altitude">--</span>
+                  </div>
+                  <div class="overview-item">
+                    <label>Type</label>
+                    <span id="lake-type">--</span>
+                  </div>
+                  <div class="overview-item">
+                    <label>Basin</label>
+                    <span id="lake-basin">--</span>
+                  </div>
+                </div>
             </div>
 
             <div class="dash-card stat-card span-1">
-              <h3>Lake Statistics (Real-time)</h3>
+              <h3>Physical Statistics</h3>
               <div class="stat-grid-dense">
-                <div class="stat-item"><label>Water Level</label><span id="lake-water-level" class="live-data">--</span></div>
-                <div class="stat-item"><label>Volume</label><span id="lake-volume">--</span></div>
-                <div class="stat-item"><label>Growth Rate</label><span id="lake-growth">--</span></div>
-                <div class="stat-item"><label>Flow Rate</label><span id="lake-flow">--</span></div>
-                <div class="stat-item"><label>Surface Area</label><span id="lake-area">--</span></div>
+                <div class="stat-item">
+                  <label>Water Level</label>
+                  <span id="lake-water-level">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Surface Area</label>
+                  <span id="lake-surface-area">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Volume (est.)</label>
+                  <span id="lake-volume">--</span>
+                </div>
+                <div class="stat-item">
+                  <label>Growth Rate</label>
+                  <span id="lake-growth-rate">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card stat-card span-1">
+              <h3>Calculated Risk Analysis</h3>
+              <div class="risk-analysis-box">
+                  <div class="risk-display">
+                      <span id="lake-risk-display-val" class="sev">--</span>
+                      <label>Current Status</label>
+                  </div>
+                  <div class="risk-metrics">
+                      <div class="metric">
+                          <label>Avg Temp (24h)</label>
+                          <span id="risk-metric-temp">--</span>
+                      </div>
+                      <div class="metric">
+                          <label>Rain (24h)</label>
+                          <span id="risk-metric-rain">--</span>
+                      </div>
+                      <div class="metric">
+                          <label>Snow (24h)</label>
+                          <span id="risk-metric-snow">--</span>
+                      </div>
+                  </div>
               </div>
             </div>
             
-            <div class="dash-card stat-card span-1">
-              <h3>Moraine / Dam Stability</h3>
-               <div class="stat-grid">
-                 <div class="stat-item"><label>Stability Index</label><span id="lake-stability">--</span></div>
-                 <div class="stat-item"><label>Structure Status</label><span id="lake-structure" class="sev">--</span></div>
-               </div>
-            </div>
-
-            
-
             <div class="dash-card chart-card span-3">
-              <h3>Local Meteorological Data (Live API)</h3>
+              <h3>Weather Analysis (Last 48 Hours)</h3>
               <div class="chart-grid-3">
-                  <div class="stat-item-lg"><label>Temp</label><span id="lake-live-temp">--</span></div>
-                  <div class="stat-item-lg"><label>Rainfall</label><span id="lake-live-rain">--</span></div>
-                  <div class="stat-item-lg"><label>Humidity</label><span id="lake-live-humid">--</span></div>
-                  <div class="chart-wrapper span-3" style="margin-top:15px;">
+                  <div class="stat-item-lg">
+                      <label>Current Temp</label>
+                      <span id="lake-current-temp">--</span>
+                  </div>
+                  <div class="stat-item-lg">
+                      <label>Condition</label>
+                      <span id="lake-current-condition">--</span>
+                  </div>
+                  <div class="stat-item-lg">
+                      <label>Rain (24h) / Snow (24h)</label>
+                      <span id="lake-rain-snow-val">--</span>
+                  </div>
+                  <div class="chart-wrapper span-3">
                       <canvas id="lake-meteo-chart"></canvas>
                   </div>
               </div>
             </div>
 
-            <div class="dash-card span-1">
-              <h3>Alert History (Trend)</h3>
-              <div class="timeline" id="lake-alert-history"></div>
-            </div>
-
-            <div class="dash-card span-2">
-                <h3>Critical Zones (Downstream)</h3>
-                <ul id="lake-critical-zones"></ul>
+            <div class="dash-card map-card span-3">
+              <h3>Map</h3>
+              <div id="lake-sim-map"></div>
             </div>
 
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="dashboard.js"></script> 
+  <script src="dashboard.js"></script>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBt1Ats_Y4epVTioinUuDB_AfQUFanHtU0",
+      authDomain: "glaciolive-fe6ea.firebaseapp.com",
+      projectId: "glaciolive-fe6ea",
+      storageBucket: "glaciolive-fe6ea.firebasestorage.app",
+      messagingSenderId: "562979922381",
+      appId: "1:562979922381:web:7c6686faa1a7181880e484",
+      measurementId: "G-ZJCNG5LTS0"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const userStatusContainer = document.getElementById('user-status-container');
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userName = user.displayName || user.email || 'User';
+        userStatusContainer.innerHTML = `<span class="welcome-user">Welcome, ${userName.split(' ')[0]}</span><a href="#" class="nav-link login-btn" id="logoutBtn">Logout</a>`;
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          signOut(auth).then(() => window.location.href = "index.html");
+        });
+      }
+    });
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours() % 12 || 12;
+      const m = now.getMinutes().toString().padStart(2,'0');
+      const am = now.getHours() >= 12 ? 'PM' : 'AM';
+      const clockEl = document.getElementById('clock');
+      if (clockEl) clockEl.textContent = `${h}:${m} ${am}`;
+    }
+    setInterval(updateClock, 1000); updateClock();
+    const themeToggle = document.getElementById('themeToggle');
+    if(themeToggle) {
+        themeToggle.onclick = () => {
+          document.body.classList.toggle('light');
+          localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+        };
+    }
+    if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
+  </script>
 </body>
 </html>
+</body>
 
+</html>
