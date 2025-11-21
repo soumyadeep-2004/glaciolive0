@@ -41,16 +41,16 @@
           
           <div class="grid-container">
             <div class="dash-card map-card span-2">
-              <h3>Real-Time Threat Map <small>(Live Satellite Sync)</small></h3>
+              <h3>Real-Time National Threat Map</h3>
               <div id="national-map"></div>
             </div>
 
             <div class="dash-card table-card span-1">
-              <h3>Top Risk Lakes (Live)</h3>
+              <h3>Top Risk Lakes (Live Status)</h3>
               <div class="table-container">
                 <table id="national-lakes-table">
                   <thead>
-                    <tr><th>Lake</th><th>State</th><th>Risk</th><th>Update</th></tr>
+                    <tr><th>Lake</th><th>State</th><th>Risk</th><th>Last Update</th></tr>
                   </thead>
                   <tbody></tbody>
                 </table>
@@ -58,14 +58,15 @@
             </div>
 
             <div class="dash-card chart-card span-3">
-              <h3>Historical Trends & Occurrences <small>(Click bars for event details)</small></h3>
+              <h3>Historical GLOF Occurrences <small>(Click bars for details)</small></h3>
               <div class="chart-grid">
-                <div class="chart-wrapper"><canvas id="national-history-chart"></canvas></div>
-                <div class="chart-wrapper"><canvas id="national-risk-chart"></canvas></div>
+                <div class="chart-wrapper span-3"><canvas id="national-history-chart"></canvas></div>
               </div>
               <div id="history-modal" class="history-modal" style="display:none;">
-                <h4 id="hist-modal-title">Event Details</h4>
-                <p id="hist-modal-desc">Select a bar to view details.</p>
+                <h4 id="hist-modal-title">Event Title</h4>
+                <p><strong>Date:</strong> <span id="hist-modal-date">--</span></p>
+                <p><strong>Location:</strong> <span id="hist-modal-loc">--</span></p>
+                <p id="hist-modal-desc">--</p>
               </div>
             </div>
           </div>
@@ -73,40 +74,40 @@
 
         <div id="state-view" class="dashboard-view">
           <div class="breadcrumb">
-            <a href="#" id="back-to-national">National</a> &gt; <span id="state-name-breadcrumb">State</span>
+            <a href="#" id="back-to-national">National Overview</a> &gt; <span id="state-name-breadcrumb">State</span>
           </div>
           
           <div class="grid-container">
             <div class="dash-card stat-card span-3">
-              <h3>State Live Monitor</h3>
+              <h3>State Alert Bar (Aggregated)</h3>
               <div class="stat-grid-4">
-                <div class="stat-item"><label>Avg Rainfall (24h)</label><span id="state-avg-rain">--</span></div>
-                <div class="stat-item"><label>Current Temp</label><span id="state-avg-temp">--</span></div>
+                <div class="stat-item"><label>Avg Rainfall</label><span id="state-avg-rain">--</span></div>
+                <div class="stat-item"><label>Avg Temp</label><span id="state-avg-temp">--</span></div>
                 <div class="stat-item"><label>Last Major Alert</label><span id="state-last-alert">--</span></div>
-                <div class="stat-item"><label>Highest Risk Lake</label><span id="state-high-risk-lake" class="sev High">--</span></div>
+                <div class="stat-item"><label>Current High Risk Lake</label><span id="state-high-risk-lake" class="sev">--</span></div>
               </div>
             </div>
 
             <div class="dash-card stat-card span-1">
-              <h3>Environment (Live API)</h3>
+              <h3>Environmental Conditions</h3>
               <div class="stat-grid">
+                <div class="stat-item"><label>Overall Risk</label><span id="state-risk" class="sev">--</span></div>
+                <div class="stat-item"><label>Ice/Snow Level</label><span id="state-snow">--</span></div>
                 <div class="stat-item"><label>Wind Speed</label><span id="state-wind">--</span></div>
                 <div class="stat-item"><label>Humidity</label><span id="state-humidity">--</span></div>
-                <div class="stat-item"><label>Snow Cover</label><span id="state-snow">--</span></div>
-                <div class="stat-item"><label>Overall Risk</label><span id="state-risk" class="sev">--</span></div>
               </div>
             </div>
 
             <div class="dash-card map-card span-2">
-              <h3>State Lake Map <small>(Click markers to zoom)</small></h3>
+              <h3>State Map Zoom</h3>
               <div id="state-map"></div>
             </div>
 
             <div class="dash-card table-card span-2">
-              <h3>Lake Status Summary</h3>
+              <h3>Lake-wise Summary (Real-time)</h3>
               <div class="table-container">
                 <table id="state-lakes-table">
-                  <thead><tr><th>Lake</th><th>Region</th><th>Water Level</th><th>Risk (Calc)</th><th>Status</th></tr></thead>
+                  <thead><tr><th>Lake Name</th><th>Region</th><th>Water Level</th><th>Risk Status</th><th>Action</th></tr></thead>
                   <tbody></tbody>
                 </table>
               </div>
@@ -114,7 +115,7 @@
 
             <div class="dash-card chart-card span-1">
               <h3>Regional Trends (Live)</h3>
-              <div class="chart-wrapper"><canvas id="state-rain-chart"></canvas></div>
+              <div class="chart-wrapper"><canvas id="state-rain-temp-chart"></canvas></div>
             </div>
           </div>
         </div>
@@ -128,66 +129,66 @@
 
           <div class="grid-container">
             
-            <div class="dash-card span-1">
-              <h3>Satellite View</h3>
-              <img id="lake-satellite-img" src="" alt="Satellite View" style="width:100%; border-radius:8px; height:180px; object-fit:cover;">
-              <div style="margin-top:10px; display:flex; justify-content:space-between; font-size:0.9em;">
-                <span>Ice Cover: <b id="lake-ice-cover">--</b></span>
-                <span>NDWI: <b id="lake-ndwi">--</b></span>
-              </div>
-            </div>
-
             <div class="dash-card map-card span-2">
-              <h3>Live Location</h3>
-              <div id="lake-map" style="height: 220px; border-radius: 8px;"></div>
+              <h3>Live Location Map</h3>
+              <div id="lake-map" style="height: 300px; border-radius: 8px;"></div>
             </div>
 
             <div class="dash-card info-card span-1">
-              <h3>Lake Details</h3>
+              <h3>Lake Overview</h3>
               <p><strong>ID:</strong> <span id="lake-id">--</span></p>
+              <p><strong>Coordinates:</strong> <span id="lake-coords">--</span></p>
               <p><strong>Type:</strong> <span id="lake-type">--</span></p>
               <p><strong>Basin:</strong> <span id="lake-basin">--</span></p>
-              <p><strong>Coordinates:</strong> <span id="lake-coords">--</span></p>
             </div>
 
             <div class="dash-card stat-card span-1">
-              <h3>Live Telemetry</h3>
+              <h3>Lake Statistics (Real-time)</h3>
               <div class="stat-grid-dense">
                 <div class="stat-item"><label>Water Level</label><span id="lake-water-level" class="live-data">--</span></div>
                 <div class="stat-item"><label>Volume</label><span id="lake-volume">--</span></div>
                 <div class="stat-item"><label>Growth Rate</label><span id="lake-growth">--</span></div>
                 <div class="stat-item"><label>Flow Rate</label><span id="lake-flow">--</span></div>
+                <div class="stat-item"><label>Surface Area</label><span id="lake-area">--</span></div>
               </div>
             </div>
-
+            
             <div class="dash-card stat-card span-1">
-              <h3>Structure Health</h3>
-              <div class="stat-grid-dense">
+              <h3>Moraine / Dam Stability</h3>
+               <div class="stat-grid">
                  <div class="stat-item"><label>Stability Index</label><span id="lake-stability">--</span></div>
-                 <div class="stat-item"><label>Dam Status</label><span id="lake-dam-status">--</span></div>
-              </div>
+                 <div class="stat-item"><label>Structure Status</label><span id="lake-structure" class="sev">--</span></div>
+               </div>
             </div>
 
             <div class="dash-card chart-card span-3">
-              <h3>Local Meteorology (OpenWeatherMap API)</h3>
+              <h3>Local Meteorological Data (Live API)</h3>
               <div class="chart-grid-3">
                   <div class="stat-item-lg"><label>Temp</label><span id="lake-live-temp">--</span></div>
-                  <div class="stat-item-lg"><label>Rain (1h)</label><span id="lake-live-rain">--</span></div>
+                  <div class="stat-item-lg"><label>Rainfall</label><span id="lake-live-rain">--</span></div>
                   <div class="stat-item-lg"><label>Humidity</label><span id="lake-live-humid">--</span></div>
                   <div class="chart-wrapper span-3" style="margin-top:15px;">
-                      <canvas id="lake-live-chart"></canvas>
+                      <canvas id="lake-meteo-chart"></canvas>
                   </div>
               </div>
             </div>
 
-            <div class="dash-card span-2">
-                <h3>Critical Infrastructure Zones</h3>
-                <ul id="lake-critical-zones"></ul>
-            </div>
-            
             <div class="dash-card span-1">
-              <h3>Alert History</h3>
-              <div class="timeline" id="lake-alert-history"></div>
+              <h3>Satellite & Ice Cover</h3>
+              <img id="lake-satellite-img" src="" alt="Satellite View" style="width:100%; height:150px; object-fit:cover; border-radius:8px; border:1px solid #ffffff20;">
+              <p style="margin-top:10px;"><strong>Ice Cover Impact:</strong> <span id="lake-ice-cover">--</span></p>
+            </div>
+
+            <div class="dash-card span-1">
+              <h3>Alert History (Trend)</h3>
+              <div class="timeline" id="lake-alert-history">
+                </div>
+            </div>
+
+            <div class="dash-card span-1">
+                <h3>Critical Zones (Downstream)</h3>
+                <ul id="lake-critical-zones">
+                   </ul>
             </div>
 
           </div>
