@@ -1,378 +1,103 @@
-/* =========================================
-   1. DASHBOARD LAYOUT & GRID
-   ========================================= */
-/* =========================================
-   THEME VARIABLES
-   ========================================= */
-:root {
-  /* Default (Dark Mode) Variables */
-  --bg-main: #0a192f;
-  --bg-card: #112240;
-  --text-primary: #e6f1ff;
-  --text-secondary: #8892b0;
-  --border-color: rgba(255, 255, 255, 0.1);
-  --accent: #64ffda;
-  --shadow: rgba(2, 12, 27, 0.7);
-}
+/* === DASHBOARD PAGE CONTAINER === */
+#dashboard .container { max-width: 1400px; margin: auto; }
 
-/* Light Mode Overrides */
-body.light-mode {
-  --bg-main: #f0f2f5;         /* Light Gray Background */
-  --bg-card: #ffffff;         /* White Cards */
-  --text-primary: #1f2937;    /* Dark Gray Text */
-  --text-secondary: #4b5563;  /* Medium Gray Text */
-  --border-color: rgba(0, 0, 0, 0.1);
-  --accent: #0077b6;          /* Darker Blue for visibility on white */
-  --shadow: rgba(0, 0, 0, 0.1);
-}
+/* === DASHBOARD TABS === */
+.dash-tabs { display: flex; margin-bottom: 20px; background: #112240; border-radius: 12px; overflow: hidden; border: 1px solid #ffffff10; }
+.dash-tab-btn { flex: 1; padding: 15px; background: transparent; border: none; color: #e0e7ef; font-weight: 600; font-size: 1.1em; font-family: 'Josefin Sans', sans-serif; cursor: pointer; transition: background 0.3s; }
+.dash-tab-btn.active { background: #4fc3f730; color: #4fc3f7; }
+.dash-tab-btn:hover:not(.active) { background: #ffffff10; }
 
-/* Apply Variables to Body */
-body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-}
+body.light .dash-tabs { background: #ffffff; border-color: #0a1a2e20; }
+body.light .dash-tab-btn { color: #0a1a2e; }
+body.light .dash-tab-btn.active { background: #4fc3f730; color: #0077b6; }
 
-/* Update Cards to use Variables */
-.dash-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px var(--shadow);
-}
+/* === VIEWS === */
+.dash-content, .dashboard-view { display: none; }
+.dash-content.active, .dashboard-view.active { display: block; }
 
-.dash-card h3 {
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border-color);
-}
+.breadcrumb { font-size: 1.1em; font-weight: 300; margin-bottom: 20px; color: #e0e7ef; }
+.breadcrumb a { color: #4fc3f7; text-decoration: none; font-weight: 400; }
+body.light .breadcrumb, body.light .breadcrumb a { color: #0a1a2e; }
 
-.stat-item label { color: var(--text-secondary); }
-.stat-item span { color: var(--text-primary); }
-
-/* Update Tables */
-th {
-  color: var(--accent);
-  border-bottom: 1px solid var(--border-color);
-}
-td {
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
-}
-tr:hover {
-  background: rgba(100, 255, 218, 0.05); /* Subtle hover effect */
-}
-/* Fix hover in light mode to be visible */
-body.light-mode tr:hover {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-/* Update Tab Buttons */
-.dash-tabs {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-}
-.dash-tab-btn { color: var(--text-secondary); }
-.dash-tab-btn.active {
-  color: var(--accent);
-  background: rgba(0, 119, 182, 0.1); /* Adjust for light mode visibility */
-}
-
-/* Update Navigation Links (Header) */
-.nav-link {
-  color: var(--text-primary); /* Ensure links are visible in light mode */
-}
-.nav-link.active {
-  color: var(--accent);
-}
-
-/* Breadcrumb Links */
-.breadcrumb { color: var(--text-secondary); }
-.breadcrumb a { color: var(--accent); }
-:root {
-  --bg-dark: #0a192f;
-  --card-dark: #112240;
-  --text-main: #e6f1ff;
-  --text-muted: #8892b0;
-  --accent: #64ffda; /* Teal */
-  --danger: #f44336;
-  --warning: #ff9800;
-  --safe: #4caf50;
-}
-
-/* Base Dashboard Container */
-#dashboard .container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Tab Navigation */
-.dash-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  background: #112240;
-  padding: 5px;
-  border-radius: 8px;
-  width: fit-content;
-}
-
-.dash-tab-btn {
-  background: transparent;
-  border: none;
-  color: #8892b0;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 600;
-  border-radius: 6px;
-  transition: all 0.3s;
-}
-
-.dash-tab-btn.active {
-  background: rgba(100, 255, 218, 0.1);
-  color: #64ffda;
-}
-
-/* Main Grid System */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 Columns standard */
-  gap: 20px;
-}
-
-/* Grid Spans */
+/* === GRID === */
+.grid-container { display: grid; gap: 20px; grid-template-columns: repeat(3, 1fr); }
 .span-1 { grid-column: span 1; }
 .span-2 { grid-column: span 2; }
 .span-3 { grid-column: span 3; }
 
-/* =========================================
-   2. CARDS & WIDGETS
-   ========================================= */
-.dash-card {
-  background: #112240;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
+/* === CARDS === */
+.dash-card { background: #112240; border-radius: 12px; padding: 20px; border: 1px solid #ffffff10; }
+.dash-card h3 { color: #4fc3f7; margin-bottom: 20px; border-bottom: 1px solid #ffffff20; padding-bottom: 10px; }
+.dash-card h3 small { font-weight: 300; color: #e0e7ef; font-size: 0.7em; }
+
+body.light .dash-card { background: #ffffff; border-color: #0a1a2e20; }
+body.light .dash-card h3 { color: #0077b6; border-bottom-color: #0a1a2e20; }
+body.light .dash-card h3 small { color: #333; }
+
+/* === LAKE OVERVIEW === */
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.overview-item { background: #0a1a2e; padding: 15px; border-radius: 8px; border: 1px solid #ffffff05; }
+.overview-item label { display: block; font-size: 0.85em; color: #aaa; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.overview-item span { font-size: 1.1em; color: #e0e7ef; font-weight: 600; display: block; overflow-wrap: break-word; }
+
+body.light .overview-item { background: #f0f8ff; border-color: #00000005; }
+body.light .overview-item span { color: #0a1a2e; }
+body.light .overview-item label { color: #666; }
+
+/* === STATS === */
+.stat-grid, .stat-grid-dense { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.stat-item { display: flex; flex-direction: column; }
+.stat-item label { font-size: 0.9em; color: #aaa; margin-bottom: 5px; }
+.stat-item span { font-size: 1.5em; font-weight: 600; color: #e0e7ef; }
+body.light .stat-item span { color: #0a1a2e; }
+
+.stat-item-lg { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a1a2e; padding: 20px; border-radius: 8px; }
+.stat-item-lg span { font-size: 1.8em; color: #4fc3f7; font-weight: 600; }
+body.light .stat-item-lg { background: #f0f8ff; }
+body.light .stat-item-lg span { color: #0077b6; }
+
+/* === CHARTS === */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.chart-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.chart-wrapper { position: relative; min-height: 250px; }
+
+/* === MAP === */
+.map-card { display: flex; flex-direction: column; }
+.map-card #national-map, .map-card #lake-sim-map { 
+    flex-grow: 1; 
+    min-height: 400px; 
+    width: 100%;
+    border-radius: 8px; 
+    background: #0a1a2e; 
+    z-index: 1; 
 }
 
-.dash-card h3 {
-  color: #ccd6f6;
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+/* === TABLE === */
+.table-card table { width: 100%; text-align: left; border-collapse: collapse; }
+.table-card th { padding: 10px; color: #4fc3f7; border-bottom: 1px solid #ffffff20; }
+.table-card td { padding: 10px; border-bottom: 1px solid #ffffff10; color: #e0e7ef; }
+.table-card tbody tr:hover { background: #4fc3f720; cursor: pointer; }
+body.light .table-card td { color: #333; }
+body.light .table-card tbody tr:hover { background: #4fc3f710; }
 
-.dash-card h3 small {
-  font-size: 0.7em;
-  color: #8892b0;
-  font-weight: 400;
-}
+/* === NEW: RISK REFERENCE TABLE === */
+.risk-ref-table th, .risk-ref-table td { border: 1px solid #ffffff20; padding: 12px; }
+.risk-ref-table th { background: #0a1a2e; }
+body.light .risk-ref-table th, body.light .risk-ref-table td { border-color: #00000010; }
+body.light .risk-ref-table th { background: #f0f8ff; }
 
-/* =========================================
-   3. STAT GRIDS (The Numbers)
-   ========================================= */
-/* Standard 2x2 Grid */
-.stat-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-/* 4-Column Grid (For Alerts Bar) */
-.stat-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
-
-/* Dense Grid (For Telemetry) */
-.stat-grid-dense {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.stat-item {
-  background: rgba(255,255,255,0.02);
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.stat-item label {
-  display: block;
-  font-size: 0.8rem;
-  color: #8892b0;
-  margin-bottom: 5px;
-}
-
-.stat-item span {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #e6f1ff;
-}
-
-/* Large Stat Items (For Weather) */
-.stat-item-lg {
-  text-align: center;
-  background: rgba(100, 255, 218, 0.05);
-  padding: 15px;
-  border-radius: 8px;
-}
-.stat-item-lg span { font-size: 1.5rem; color: #64ffda; }
-
-/* =========================================
-   4. MAPS & CHARTS
-   ========================================= */
-.map-card > div {
-  width: 100%;
-  height: 100%;
-  min-height: 350px;
-  border-radius: 8px;
-  z-index: 1;
-}
-
-.chart-wrapper {
-  position: relative;
-  width: 100%;
-  min-height: 250px;
-}
-
-.chart-grid {
-  display: grid;
-  grid-template-columns: 1fr; 
-  gap: 20px;
-}
-
-.chart-grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 15px;
-}
-
-/* =========================================
-   5. TABLES
-   ========================================= */
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-th {
-  text-align: left;
-  padding: 12px;
-  color: #64ffda;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-td {
-  padding: 12px;
-  color: #8892b0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-tr:hover {
-  background: rgba(255,255,255,0.02);
-  cursor: pointer;
-}
-
-/* Severity Colors */
-.sev.High { color: #f44336; font-weight: bold; }
-.sev.Medium { color: #ff9800; font-weight: bold; }
-.sev.Low { color: #4caf50; font-weight: bold; }
-
-/* =========================================
-   6. TIMELINES & MODALS
-   ========================================= */
-.timeline {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.timeline-item {
-  border-left: 2px solid #64ffda;
-  padding-left: 15px;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.timeline-item::before {
-  content: '';
-  position: absolute;
-  left: -6px;
-  top: 0;
-  width: 10px;
-  height: 10px;
-  background: #64ffda;
-  border-radius: 50%;
-}
-
-.timeline-item strong { display: block; color: #e6f1ff; }
-.timeline-item span { font-size: 0.8em; color: #8892b0; }
-.timeline-item p { margin-top: 5px; font-size: 0.9em; color: #a8b2d1; }
-
-/* History Modal (Hidden by default) */
-.history-modal {
-  display: none; /* Toggled by JS */
-  background: #172a45;
-  border-left: 4px solid #64ffda;
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 0 8px 8px 0;
-  animation: slideIn 0.3s ease-out;
-}
-@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-/* =========================================
-   7. UTILITIES & ANIMATIONS
-   ========================================= */
-/* Breadcrumb */
-.breadcrumb {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-  color: #8892b0;
-}
-.breadcrumb a { color: #64ffda; text-decoration: none; }
-.breadcrumb a:hover { text-decoration: underline; }
-
-/* Views */
-.dashboard-view { display: none; animation: fadeIn 0.5s; }
-.dashboard-view.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* Live Data Pulse */
-.live-data {
-  color: #64ffda;
-  transition: all 0.5s ease;
-}
-
-/* Custom Map Pin */
-.custom-pin {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* === NEW: RISK ANALYSIS BOX === */
+.risk-analysis-box { display: flex; flex-direction: column; height: 100%; }
+.risk-display { text-align: center; padding-bottom: 15px; border-bottom: 1px solid #ffffff10; margin-bottom: 15px; }
+.risk-display span { font-size: 2em; font-weight: 700; display: block; }
+.risk-display label { font-size: 0.9em; color: #aaa; }
+.risk-metrics { display: flex; justify-content: space-between; }
+.risk-metrics .metric { text-align: center; }
+.risk-metrics .metric label { font-size: 0.8em; color: #aaa; display: block; margin-bottom: 5px; }
+.risk-metrics .metric span { font-size: 1.1em; color: #e0e7ef; font-weight: 600; }
+body.light .risk-display span { color: #0a1a2e; }
+body.light .risk-metrics .metric span { color: #0a1a2e; }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .grid-container { grid-template-columns: 1fr 1fr; }
-  .span-3 { grid-column: span 2; }
-  .stat-grid-4 { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 768px) {
-  .grid-container { grid-template-columns: 1fr; }
-  .span-1, .span-2, .span-3 { grid-column: span 1; }
-  .chart-grid-3 { grid-template-columns: 1fr; }
-}
+@media (max-width: 1200px) { .grid-container { grid-template-columns: repeat(2, 1fr); } .span-3 { grid-column: span 2; } }
+@media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } .span-1, .span-2, .span-3 { grid-column: span 1; } .chart-grid, .chart-grid-3 { grid-template-columns: 1fr; } }
