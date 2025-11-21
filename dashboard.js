@@ -2,7 +2,7 @@
 // 1. CONFIGURATION & API KEYS
 // =======================================================
 const API_KEY = "b1439b5b93805a9e9cc7737829d3b30f"; 
-const SIMULATION_INTERVAL = 3000; 
+const SIMULATION_INTERVAL = 30; 
 
 // =======================================================
 // 2. MOCK DATABASE (Mirrors Firebase Structure)
@@ -418,3 +418,4 @@ function renderLiveMeteoChart() {
     options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: true, grid: { color: '#112240' }, ticks: { color: '#8892b0' } }, x: { grid: { display: false }, ticks: { color: '#8892b0' } } } }
   });
 }
+
