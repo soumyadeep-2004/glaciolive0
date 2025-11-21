@@ -376,4 +376,3 @@ tr:hover {
   .span-1, .span-2, .span-3 { grid-column: span 1; }
   .chart-grid-3 { grid-template-columns: 1fr; }
 }
-
