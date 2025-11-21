@@ -1,6 +1,92 @@
 /* =========================================
    1. DASHBOARD LAYOUT & GRID
    ========================================= */
+/* =========================================
+   THEME VARIABLES
+   ========================================= */
+:root {
+  /* Default (Dark Mode) Variables */
+  --bg-main: #0a192f;
+  --bg-card: #112240;
+  --text-primary: #e6f1ff;
+  --text-secondary: #8892b0;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent: #64ffda;
+  --shadow: rgba(2, 12, 27, 0.7);
+}
+
+/* Light Mode Overrides */
+body.light-mode {
+  --bg-main: #f0f2f5;         /* Light Gray Background */
+  --bg-card: #ffffff;         /* White Cards */
+  --text-primary: #1f2937;    /* Dark Gray Text */
+  --text-secondary: #4b5563;  /* Medium Gray Text */
+  --border-color: rgba(0, 0, 0, 0.1);
+  --accent: #0077b6;          /* Darker Blue for visibility on white */
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Apply Variables to Body */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+/* Update Cards to use Variables */
+.dash-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px var(--shadow);
+}
+
+.dash-card h3 {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stat-item label { color: var(--text-secondary); }
+.stat-item span { color: var(--text-primary); }
+
+/* Update Tables */
+th {
+  color: var(--accent);
+  border-bottom: 1px solid var(--border-color);
+}
+td {
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+tr:hover {
+  background: rgba(100, 255, 218, 0.05); /* Subtle hover effect */
+}
+/* Fix hover in light mode to be visible */
+body.light-mode tr:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* Update Tab Buttons */
+.dash-tabs {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+}
+.dash-tab-btn { color: var(--text-secondary); }
+.dash-tab-btn.active {
+  color: var(--accent);
+  background: rgba(0, 119, 182, 0.1); /* Adjust for light mode visibility */
+}
+
+/* Update Navigation Links (Header) */
+.nav-link {
+  color: var(--text-primary); /* Ensure links are visible in light mode */
+}
+.nav-link.active {
+  color: var(--accent);
+}
+
+/* Breadcrumb Links */
+.breadcrumb { color: var(--text-secondary); }
+.breadcrumb a { color: var(--accent); }
 :root {
   --bg-dark: #0a192f;
   --card-dark: #112240;
@@ -290,3 +376,4 @@ tr:hover {
   .span-1, .span-2, .span-3 { grid-column: span 1; }
   .chart-grid-3 { grid-template-columns: 1fr; }
 }
+
