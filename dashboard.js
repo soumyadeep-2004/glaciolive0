@@ -134,7 +134,7 @@ function renderNationalView() {
       <td>${lake.name}</td>
       <td>${lake.state}</td>
       <td class="sev ${lake.risk === 'Moderate' ? 'Medium' : lake.risk}">${lake.risk}</td>
-      <td>Every 5 min</td>
+      <td>5 min ago..</td>
     </tr>
   `).join('');
   document.querySelector('#national-lakes-table tbody').innerHTML = tableBody;
@@ -351,3 +351,4 @@ function setText(id, text, className) {
     if(className) el.className = `sev ${className}`;
   }
 }
+
