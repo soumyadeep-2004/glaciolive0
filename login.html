@@ -6,7 +6,6 @@
   <title>Login - GlacioLive</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
   
   <style>
     :root {
@@ -31,13 +30,22 @@
       overflow: hidden;
       padding-top: 20px;
       padding-bottom: 20px;
+      background: #0a1a2e; /* Fallback bg */
+    }
+
+    /* Background effect placeholder */
+    .bg {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background: radial-gradient(circle at center, #1b3a5f 0%, #0a1a2e 100%);
     }
 
     .container {
       position: relative;
       width: 400px;
       max-width: 90%;
-      height: 640px;
+      height: 680px; 
       perspective: 1000px;
     }
 
@@ -56,7 +64,7 @@
     .login-box { transform: rotateY(0deg); z-index: 2; }
     .register-box { transform: rotateY(180deg); z-index: 1; }
     .phone-box { transform: rotateY(-180deg); z-index: 1; }
-    .forgot-box { transform: rotateX(180deg); z-index: 1; } /* Flips vertically */
+    .forgot-box { transform: rotateX(180deg); z-index: 1; }
 
     /* State: Show Register */
     .container.show-register .login-box { transform: rotateY(-180deg); z-index: 1; }
@@ -67,7 +75,6 @@
     .container.show-phone .phone-box { transform: rotateY(0deg); z-index: 2; }
     
     /* State: Show Forgot Password */
-    /* We rotate the login box down (X-axis) and bring the forgot box up */
     .container.show-forgot .login-box { transform: rotateX(-180deg); z-index: 1; }
     .container.show-forgot .forgot-box { transform: rotateX(0deg); z-index: 2; }
 
@@ -80,12 +87,9 @@
       flex-direction: column;
       justify-content: center;
       backface-visibility: hidden;
-      background: #112240; /* Ensure background is set for rotation */
+      background: #112240; 
     }
-    /* Light mode background fix */
-    body.light .form-content {
-        background: #ffffff;
-    }
+    body.light .form-content { background: #ffffff; }
 
     h3, h2 {
       font-size: 2.2em;
@@ -94,7 +98,7 @@
       margin-bottom: 20px;
       position: relative;
       padding-top: 20px;
-      color: #ffffff;
+      color: #4fc3f7;
     }
     body.light h3, body.light h2 { color: #0077b6; }
     
@@ -128,10 +132,7 @@
       background: #0a1a2e;
       color: #fff;
     }
-    body.light .input-group input {
-        background: #f0f8ff;
-        color: #333;
-    }
+    body.light .input-group input { background: #f0f8ff; color: #333; }
 
     .input-group label {
       position: absolute;
@@ -156,8 +157,7 @@
     }
     body.light .input-group input:focus ~ label,
     body.light .input-group input:valid ~ label {
-      background: #ffffff;
-      color: #0077b6;
+      background: #ffffff; color: #0077b6;
     }
 
     .btn {
@@ -174,10 +174,8 @@
       background: linear-gradient(90deg, #4fc3f7, #0077b6);
       color: #fff;
     }
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5);
-    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5); }
+    
     .google-btn {
       width: 100%;
       padding: 15px;
@@ -195,14 +193,9 @@
       background: #fff;
       color: #333;
     }
-    .google-btn:hover {
-      transform: translateY(-3px);
-      border-color: #aaa;
-      box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5);
-    }
-    .google-btn img {
-      width: 20px;
-    }
+    .google-btn:hover { border-color: #aaa; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .google-btn img { width: 20px; }
+    
     .phone-btn {
       width: 100%;
       padding: 12px;
@@ -216,9 +209,7 @@
       transition: 0.3s;
       margin-top: 10px;
     }
-    .phone-btn:hover {
-      background: #2c8e45;
-    }
+    .phone-btn:hover { background: #2c8e45; }
 
     .link {
       text-align: center;
@@ -228,26 +219,18 @@
     }
     body.light .link { color: #333; }
     
-    .link a {
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-      color: #4fc3f7;
-    }
+    .link a { text-decoration: none; font-weight: 600; cursor: pointer; color: #4fc3f7; }
     body.light .link a { color: #0077b6; }
+    .link a:hover { text-decoration: underline; }
     
-    .link a:hover {
-      text-decoration: underline;
-    }
-    
-    /* Back to Home Page Button */
     .link-btn {
       display: block;
       width: 100%;
       padding: 15px;
-      background: #259c53;
+      background: #f0f8ff;
+      border: 1px solid #ddd;
       border-radius: 50px;
-      color: #ffffff;
+      color: #0a1a2e;
       font-size: 1em;
       font-weight: 600;
       cursor: pointer;
@@ -255,19 +238,13 @@
       margin-top: 15px;
       text-align: center;
       text-decoration: none;
-      font-family: 'Josefin Sans', sans-serif;
-    }
-
-    .link-btn:hover {
-      background: #2c8e45;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(110, 142, 251, 0.5);
     }
     
     #recaptcha-container {
-        margin: 15px auto;
-        transform: scale(0.9);
-        transform-origin: center;
+        margin: 10px auto;
+        display: flex;
+        justify-content: center;
+        min-height: 80px; /* Reserve space so layout doesn't jump */
     }
 
     .toast {
@@ -284,13 +261,8 @@
       transition: all 0.5s;
       z-index: 2000;
     }
-    .toast.error {
-        background: #f44336;
-    }
-    .toast.show {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    .toast.error { background: #f44336; }
+    .toast.show { opacity: 1; transform: translateX(0); }
   </style>
 </head>
 <body class="login-page">
@@ -299,7 +271,6 @@
 
   <div class="container" id="container">
   
-    <!-- Login Form -->
     <div class="form-box login-box">
       <div class="form-content">
         <h3>Sign in to <div class="logo"><span>Glacio</span>Live</div></h3>
@@ -312,7 +283,6 @@
             <input type="password" id="loginPassword" required />
             <label>Password</label>
           </div>
-          <!-- ADDED: Forgot Password Link -->
           <div style="text-align: right; margin-bottom: 10px;">
              <a href="#" id="showForgot" style="color: #aaa; font-size: 0.9em; text-decoration: none;">Forgot Password?</a>
           </div>
@@ -324,6 +294,10 @@
           Sign in with Google
         </button>
         
+        <button type="button" class="phone-btn" id="showPhoneLogin">
+          Sign in with Phone
+        </button>
+        
         <a href="index.html" class="link-btn">Back to Home Page</a>
         
         <div class="link">
@@ -332,7 +306,6 @@
       </div>
     </div>
 
-    <!-- Register Form -->
     <div class="form-box register-box">
       <div class="form-content">
         <h2>Join Us Today</h2>
@@ -360,22 +333,23 @@
       </div>
     </div>
     
-    <!-- Phone Auth Form -->
     <div class="form-box phone-box">
       <div class="form-content">
         <h2 id="phoneTitle">Sign In with Phone</h2>
         
         <form id="phoneForm">
           <div class="input-group">
-            <input type="tel" id="phoneNumber" placeholder="+91" required />
-            <label>Phone Number</label>
+            <input type="tel" id="phoneNumber" placeholder="" required />
+            <label>Phone Number (+91...)</label>
           </div>
+          
           <div id="recaptcha-container"></div>
+
           <button type="submit" class="btn">Send OTP</button>
         </form>
         
         <form id="otpForm" style="display:none;">
-            <p>Enter the OTP sent to <span id="phoneDisplay"></span></p>
+            <p style="text-align:center; color:#ccc; margin-bottom:10px;">OTP sent to <span id="phoneDisplay"></span></p>
           <div class="input-group">
             <input type="text" id="otpInput" required />
             <label>OTP Code</label>
@@ -391,7 +365,6 @@
       </div>
     </div>
     
-    <!-- ADDED: Forgot Password Form -->
     <div class="form-box forgot-box">
       <div class="form-content">
         <h2>Reset Password</h2>
@@ -424,7 +397,7 @@
     const showPhoneLogin = document.getElementById('showPhoneLogin');
     const showLoginFromPhone = document.getElementById('showLoginFromPhone');
     
-    // ADDED: Forgot Password Controls
+    // Forgot Password Controls
     const showForgot = document.getElementById('showForgot');
     const hideForgot = document.getElementById('hideForgot');
     
@@ -466,18 +439,17 @@
     }
   </script>
 
-  <!-- Firebase SDKs and Authentication Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
     import { 
       getAuth, 
       GoogleAuthProvider, 
-      signInWithPopup,
-      RecaptchaVerifier,
-      signInWithPhoneNumber,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail, // ADDED: Import for reset function
+      signInWithPopup, 
+      RecaptchaVerifier, 
+      signInWithPhoneNumber, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      sendPasswordResetEmail,
       updateProfile
     } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
@@ -496,206 +468,195 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     
-    // --- REAL GEOLOCATION CAPTURE ---
-    function getRealLocation() {
-        const FALLBACK_LAT = 28.6; 
-        const FALLBACK_LON = 77.2;
-        const FALLBACK_SOURCE = "Default/Fallback (Permission Denied)";
-        
-        if (navigator.geolocation) {
-            return new Promise((resolve) => {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        resolve({
-                            lat: parseFloat(position.coords.latitude.toFixed(4)),
-                            lon: parseFloat(position.coords.longitude.toFixed(4)),
-                            source: "Browser GPS (Accurate)"
-                        });
-                    },
-                    (error) => {
-                        console.warn("Geolocation Error:", error.message);
-                        resolve({
-                            lat: FALLBACK_LAT,
-                            lon: FALLBACK_LON,
-                            source: FALLBACK_SOURCE
-                        });
-                    },
-                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-                );
-            });
-        } else {
-            return Promise.resolve({
-                lat: FALLBACK_LAT,
-                lon: FALLBACK_LON,
-                source: "Unsupported Browser (Fallback)"
-            });
+    // --- HELPER: Clean/Clear Recaptcha ---
+    function clearRecaptcha() {
+        if (window.recaptchaVerifier) {
+            try { window.recaptchaVerifier.clear(); } catch(e) {}
+            window.recaptchaVerifier = null;
         }
+        // Force clear the DOM element too
+        const container = document.getElementById('recaptcha-container');
+        if (container) container.innerHTML = '';
     }
 
-    // --- CORE USER DATA SAVING FUNCTION ---
+    // --- REAL GEOLOCATION ---
+    function getRealLocation() {
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                return resolve({ lat: 28.6, lon: 77.2, source: "No Support" });
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => resolve({
+                    lat: parseFloat(pos.coords.latitude.toFixed(4)),
+                    lon: parseFloat(pos.coords.longitude.toFixed(4)),
+                    source: "GPS"
+                }),
+                (err) => resolve({ lat: 28.6, lon: 77.2, source: "Error/Denied" }),
+                { timeout: 5000 }
+            );
+        });
+    }
+
+    // --- SAVE USER DATA ---
     async function saveUserData(user, additionalData = {}) {
         const userRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(userRef);
-        
-        const geoLocation = await getRealLocation(); 
+        const loc = await getRealLocation();
 
         if (!docSnap.exists()) {
-            let dataToSave = {
-                displayName: user.displayName || additionalData.displayName || "Anonymous",
-                email: user.email || null,
-                phoneNumber: user.phoneNumber || null,
+            await setDoc(userRef, {
+                displayName: user.displayName || additionalData.displayName || "User",
+                email: user.email,
+                phoneNumber: user.phoneNumber,
                 joinDate: serverTimestamp(),
-                geo: geoLocation
-            };
-            await setDoc(userRef, dataToSave);
-            return true;
+                geo: loc
+            });
+            return true; // Is new user
         }
-        
-        await setDoc(userRef, { geo: geoLocation }, { merge: true });
-        return false;
+        await setDoc(userRef, { geo: loc }, { merge: true });
+        return false; // Returning user
     }
     
     // --- GOOGLE SIGN-IN ---
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-    const provider = new GoogleAuthProvider();
-    
-    googleLoginBtn.addEventListener('click', () => {
-      signInWithPopup(auth, provider)
-        .then(async (result) => {
-          const user = result.user;
-          const isNewUser = await saveUserData(user);
-          showToast(isNewUser ? `Welcome, ${user.displayName}!` : `Welcome back, ${user.displayName}!`);
+    document.getElementById('googleLoginBtn').addEventListener('click', () => {
+      signInWithPopup(auth, new GoogleAuthProvider())
+        .then(async (res) => {
+          await saveUserData(res.user);
           window.location.href = "index.html";
-        }).catch((error) => {
-          console.error("Google Sign-In Error:", error.message);
-          showToast(`Error: ${error.message}`, true);
-        });
+        }).catch(err => showToast(err.message, true));
     });
 
-    // --- EMAIL/PASSWORD LOGIN ---
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', (e) => {
+    // --- EMAIL LOGIN ---
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        signInWithEmailAndPassword(auth, email, password)
-            .then(async (userCredential) => {
-                await saveUserData(userCredential.user); 
-                showToast(`Welcome back, ${userCredential.user.email}!`);
+        signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value)
+            .then(async (res) => {
+                await saveUserData(res.user);
                 window.location.href = "index.html";
-            })
-            .catch((error) => {
-                showToast(error.message, true);
-            });
+            }).catch(err => showToast(err.message, true));
     });
 
-    // --- REGISTRATION ---
-    const registerForm = document.getElementById('registerForm');
-    registerForm.addEventListener('submit', (e) => {
+    // --- REGISTER ---
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('registerName').value;
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(async (userCredential) => {
-                const user = userCredential.user;
-                await updateProfile(user, { displayName: name });
-                await saveUserData(user, { displayName: name });
-                showToast(`Welcome, ${name}! Your account is created.`);
+        createUserWithEmailAndPassword(auth, document.getElementById('registerEmail').value, document.getElementById('registerPassword').value)
+            .then(async (res) => {
+                await updateProfile(res.user, { displayName: name });
+                await saveUserData(res.user, { displayName: name });
                 window.location.href = "index.html";
-            })
-            .catch((error) => {
-                showToast(error.message, true);
-            });
-    });
-    
-    // --- ADDED: FORGOT PASSWORD LOGIC ---
-    const forgotForm = document.getElementById('forgotForm');
-    
-    forgotForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('forgotEmail').value;
-        
-        sendPasswordResetEmail(auth, email)
-          .then(() => {
-            showToast(`Reset link sent to ${email}`);
-            document.getElementById('forgotEmail').value = ''; // Clear input
-            // Optionally flip back to login after a delay
-            setTimeout(() => {
-                container.classList.remove('show-forgot');
-            }, 3000);
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            showToast(`Error: ${errorMessage}`, true);
-          });
+            }).catch(err => showToast(err.message, true));
     });
 
-    // --- PHONE AUTH ---
+    // --- FORGOT PASSWORD ---
+    document.getElementById('forgotForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        sendPasswordResetEmail(auth, document.getElementById('forgotEmail').value)
+            .then(() => {
+                showToast("Reset email sent!");
+                setTimeout(() => container.classList.remove('show-forgot'), 2000);
+            }).catch(err => showToast(err.message, true));
+    });
+
+    // =============================================
+    //   ROBUST PHONE AUTHENTICATION LOGIC
+    // =============================================
     const phoneForm = document.getElementById('phoneForm');
     const otpForm = document.getElementById('otpForm');
-    const phoneNumberInput = document.getElementById('phoneNumber');
-    const phoneDisplay = document.getElementById('phoneDisplay');
-    const otpInput = document.getElementById('otpInput');
+    const showPhoneLoginBtn = document.getElementById('showPhoneLogin');
 
+    // 1. Setup Function
     function setupRecaptcha() {
-      if (!window.recaptchaVerifier) {
-          window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-              'size': 'normal',
-              'callback': (response) => {},
-              'expired-callback': () => {
-                  showToast("reCAPTCHA expired, please solve again.", true);
-              }
-          });
-          window.recaptchaVerifier.render().catch(err => {
-            console.error("reCAPTCHA render error:", err);
-          });
-      }
+        const container = document.getElementById('recaptcha-container');
+        if (!container) return;
+
+        // If verifier exists, we assume it's good. 
+        if (window.recaptchaVerifier) return;
+
+        // Ensure container is empty to prevent "already rendered" error
+        container.innerHTML = ''; 
+
+        try {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, container, {
+                'size': 'normal',
+                'callback': (response) => console.log("Captcha Solved"),
+                'expired-callback': () => {
+                    showToast("Captcha expired", true);
+                    clearRecaptcha();
+                }
+            });
+            
+            window.recaptchaVerifier.render().catch(err => {
+                console.error("Render Error:", err);
+                // If render fails, clear and try to reset state
+                clearRecaptcha();
+            });
+            
+        } catch (error) {
+            console.error("Setup Error:", error);
+            clearRecaptcha();
+        }
     }
-    
-    showPhoneLogin.addEventListener('click', () => {
-        setupRecaptcha();
+
+    // 2. Trigger Setup on Button Click
+    showPhoneLoginBtn.addEventListener('click', () => {
         container.classList.add('show-phone');
+        // Wait for animation to finish (500ms) before rendering
+        setTimeout(() => setupRecaptcha(), 600);
     });
 
+    // 3. Send OTP
     phoneForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const phoneNumber = phoneNumberInput.value;
-        const appVerifier = window.recaptchaVerifier;
         
-        signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-            .then((confirmationResult) => {
-                window.confirmationResult = confirmationResult;
-                showToast("OTP sent successfully!");
-                phoneForm.style.display = 'none';
-                otpForm.style.display = 'block';
-                phoneDisplay.textContent = phoneNumber;
-                document.getElementById('phoneTitle').textContent = "Enter OTP";
-            }).catch((error) => {
-                showToast(`Error sending OTP: ${error.message}`, true);
-                window.recaptchaVerifier.render().catch(err => console.error(err));
-            });
+        let phone = document.getElementById('phoneNumber').value.trim();
+        phone = phone.startsWith('+') ? phone : `+91${phone}`;
+
+        // FORCE CHECK: If missing, try one last setup
+        if (!window.recaptchaVerifier) {
+            console.log("Forcing Recaptcha Setup...");
+            setupRecaptcha();
+        }
+
+        // Small delay to allow the Force Setup to initialize object
+        setTimeout(() => {
+            if (!window.recaptchaVerifier) {
+                alert("Error: Google ReCAPTCHA failed to load. Please check your internet connection or refresh.");
+                return;
+            }
+
+            signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    showToast("OTP Sent!");
+                    phoneForm.style.display = 'none';
+                    otpForm.style.display = 'block';
+                    document.getElementById('phoneDisplay').innerText = phone;
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showToast("Error: " + error.message, true);
+                    // If it failed, reset captcha so they can try again
+                    clearRecaptcha();
+                    // Re-show the captcha for the next attempt
+                    setTimeout(() => setupRecaptcha(), 1000);
+                });
+        }, 100); 
     });
 
+    // 4. Verify OTP
     otpForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const code = otpInput.value;
+        if (!window.confirmationResult) return;
         
-        window.confirmationResult.confirm(code).then(async (result) => {
-            const user = result.user;
-            await saveUserData(user); 
-            showToast("Login Successful!");
-            window.location.href = "index.html";
-        }).catch((error) => {
-            showToast("Invalid OTP. Please try again.", true);
-        });
+        window.confirmationResult.confirm(document.getElementById('otpInput').value)
+            .then(async (res) => {
+                await saveUserData(res.user, { displayName: "Mobile User" });
+                window.location.href = "index.html";
+            }).catch(err => showToast("Invalid OTP", true));
     });
+
   </script>
 
 </body>
 </html>
-
-
