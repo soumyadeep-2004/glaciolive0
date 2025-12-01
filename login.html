@@ -439,7 +439,7 @@
     }
   </script>
 
-  <script type="module">
+ <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
     import { 
       getAuth, 
@@ -464,9 +464,12 @@
       measurementId: "G-ZJCNG5LTS0"
     };
 
+    // 1. Initialize App
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    
+    // 2. MAKE AUTH GLOBAL (Fixes the "undefined" error)
+    window.auth = getAuth(app);
+    window.db = getFirestore(app);
     
     // --- HELPER: Clean/Clear Recaptcha ---
     function clearRecaptcha() {
@@ -474,7 +477,6 @@
             try { window.recaptchaVerifier.clear(); } catch(e) {}
             window.recaptchaVerifier = null;
         }
-        // Force clear the DOM element too
         const container = document.getElementById('recaptcha-container');
         if (container) container.innerHTML = '';
     }
@@ -499,7 +501,7 @@
 
     // --- SAVE USER DATA ---
     async function saveUserData(user, additionalData = {}) {
-        const userRef = doc(db, "users", user.uid);
+        const userRef = doc(window.db, "users", user.uid);
         const docSnap = await getDoc(userRef);
         const loc = await getRealLocation();
 
@@ -511,15 +513,15 @@
                 joinDate: serverTimestamp(),
                 geo: loc
             });
-            return true; // Is new user
+            return true; 
         }
         await setDoc(userRef, { geo: loc }, { merge: true });
-        return false; // Returning user
+        return false; 
     }
     
     // --- GOOGLE SIGN-IN ---
     document.getElementById('googleLoginBtn').addEventListener('click', () => {
-      signInWithPopup(auth, new GoogleAuthProvider())
+      signInWithPopup(window.auth, new GoogleAuthProvider())
         .then(async (res) => {
           await saveUserData(res.user);
           window.location.href = "index.html";
@@ -529,7 +531,7 @@
     // --- EMAIL LOGIN ---
     document.getElementById('loginForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value)
+        signInWithEmailAndPassword(window.auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value)
             .then(async (res) => {
                 await saveUserData(res.user);
                 window.location.href = "index.html";
@@ -540,7 +542,7 @@
     document.getElementById('registerForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('registerName').value;
-        createUserWithEmailAndPassword(auth, document.getElementById('registerEmail').value, document.getElementById('registerPassword').value)
+        createUserWithEmailAndPassword(window.auth, document.getElementById('registerEmail').value, document.getElementById('registerPassword').value)
             .then(async (res) => {
                 await updateProfile(res.user, { displayName: name });
                 await saveUserData(res.user, { displayName: name });
@@ -551,7 +553,7 @@
     // --- FORGOT PASSWORD ---
     document.getElementById('forgotForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        sendPasswordResetEmail(auth, document.getElementById('forgotEmail').value)
+        sendPasswordResetEmail(window.auth, document.getElementById('forgotEmail').value)
             .then(() => {
                 showToast("Reset email sent!");
                 setTimeout(() => container.classList.remove('show-forgot'), 2000);
@@ -559,7 +561,7 @@
     });
 
     // =============================================
-    //   ROBUST PHONE AUTHENTICATION LOGIC
+    //   FIXED PHONE AUTH LOGIC
     // =============================================
     const phoneForm = document.getElementById('phoneForm');
     const otpForm = document.getElementById('otpForm');
@@ -568,16 +570,24 @@
     // 1. Setup Function
     function setupRecaptcha() {
         const container = document.getElementById('recaptcha-container');
-        if (!container) return;
+        if (!container) {
+            console.error("Recaptcha container missing");
+            return;
+        }
 
-        // If verifier exists, we assume it's good. 
-        if (window.recaptchaVerifier) return;
+        // CRITICAL FIX: Check if auth exists
+        if (!window.auth) {
+            console.error("Firebase Auth not initialized yet!");
+            return;
+        }
 
-        // Ensure container is empty to prevent "already rendered" error
+        if (window.recaptchaVerifier) return; // Already exists
+
         container.innerHTML = ''; 
 
         try {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, container, {
+            // FIX: Using window.auth here ensures it is NOT undefined
+            window.recaptchaVerifier = new RecaptchaVerifier(window.auth, container, {
                 'size': 'normal',
                 'callback': (response) => console.log("Captcha Solved"),
                 'expired-callback': () => {
@@ -586,23 +596,24 @@
                 }
             });
             
-            window.recaptchaVerifier.render().catch(err => {
+            window.recaptchaVerifier.render().then(widgetId => {
+                console.log("Recaptcha Rendered with ID:", widgetId);
+            }).catch(err => {
                 console.error("Render Error:", err);
-                // If render fails, clear and try to reset state
                 clearRecaptcha();
             });
             
         } catch (error) {
             console.error("Setup Error:", error);
-            clearRecaptcha();
+            // Don't clear immediately on error, let the user see the console
         }
     }
 
     // 2. Trigger Setup on Button Click
     showPhoneLoginBtn.addEventListener('click', () => {
         container.classList.add('show-phone');
-        // Wait for animation to finish (500ms) before rendering
-        setTimeout(() => setupRecaptcha(), 600);
+        // Wait 1s for animation
+        setTimeout(() => setupRecaptcha(), 1000);
     });
 
     // 3. Send OTP
@@ -612,20 +623,18 @@
         let phone = document.getElementById('phoneNumber').value.trim();
         phone = phone.startsWith('+') ? phone : `+91${phone}`;
 
-        // FORCE CHECK: If missing, try one last setup
         if (!window.recaptchaVerifier) {
             console.log("Forcing Recaptcha Setup...");
             setupRecaptcha();
         }
 
-        // Small delay to allow the Force Setup to initialize object
         setTimeout(() => {
             if (!window.recaptchaVerifier) {
-                alert("Error: Google ReCAPTCHA failed to load. Please check your internet connection or refresh.");
+                alert("Please wait for the 'I am not a robot' box to appear.");
                 return;
             }
 
-            signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
+            signInWithPhoneNumber(window.auth, phone, window.recaptchaVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
                     showToast("OTP Sent!");
@@ -634,14 +643,13 @@
                     document.getElementById('phoneDisplay').innerText = phone;
                 })
                 .catch((error) => {
-                    console.error(error);
+                    console.error("SMS Error:", error);
                     showToast("Error: " + error.message, true);
-                    // If it failed, reset captcha so they can try again
+                    // Reset on error
                     clearRecaptcha();
-                    // Re-show the captcha for the next attempt
                     setTimeout(() => setupRecaptcha(), 1000);
                 });
-        }, 100); 
+        }, 500); 
     });
 
     // 4. Verify OTP
@@ -660,3 +668,4 @@
 
 </body>
 </html>
+
